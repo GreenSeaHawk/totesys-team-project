@@ -1,15 +1,13 @@
-name: Deployment Checks
+name: CI Workflow
 
 on:
   push:
     branches:
       - main
-  deployment:
 
 jobs:
-  build-and-test:
+  setup-python:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -19,12 +17,26 @@ jobs:
         with:
           python-version: '3.13.0'
 
+  install-dependencies:
+    needs: setup-python  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Install dependencies
         run: |
           make create-environment
           make requirements
 
-      - name: Run All Checks
+  run-tests:
+    needs: install-dependencies  # Ensures dependencies are installed before running tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Development Checks
         run: |
           make dev-setup
           make run-checks
