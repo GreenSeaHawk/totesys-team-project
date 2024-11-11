@@ -1,6 +1,12 @@
-# Terraform
-**/.terraform*
-terraform/init.sh
+# Terraform lock file
+**/.terraform.lock.hcl
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
 
 
 # Byte-compiled / optimized / DLL files

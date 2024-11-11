@@ -5,6 +5,11 @@ terraform {
       version = "~> 5.0"
     }
   }
+  backend "s3" {
+    bucket = "totesys-state-bucket-cimmeria"
+    key = "totesys/terraform.tfstate"
+    region = "eu-west-2"
+  }
 }
 
 provider "aws" {
@@ -18,6 +23,3 @@ provider "aws" {
   }
 }
 
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
