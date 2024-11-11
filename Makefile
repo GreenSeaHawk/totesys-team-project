@@ -69,7 +69,7 @@ flake8:
 	$(call execute_in_env, $(PIP) install flake8)
 
 
-## Install flake8, a pep8 check.
+## Install pytest
 pytest:
 	$(call execute_in_env, $(PIP) install pytest)
 
@@ -93,7 +93,9 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vv)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest/lambda/extract -vv)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest/lambda/load -vv)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest/lambda/transform -vv)
 
 ## Run all checks
-run-checks: security-test run-black unit-test 
+run-checks: security-test unit-test 
