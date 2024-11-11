@@ -72,8 +72,14 @@ coverage:
 flake8:
 	$(call execute_in_env, $(PIP) install flake8)
 
+
+## Install flake8, a pep8 check.
+pytest:
+	$(call execute_in_env, $(PIP) install pytest)
+
+
 ## Set up dev requirements (bandit, safety, black)
-dev-setup: bandit safety black coverage flake8
+dev-setup: bandit safety black coverage flake8 pytest
 
 # Build / Run
 
