@@ -68,7 +68,7 @@ coverage:
 	$(call execute_in_env, $(PIP) install coverage)
 
 
-## Install flake8, a security linter for Python code.
+## Install flake8, a pep8 check.
 flake8:
 	$(call execute_in_env, $(PIP) install flake8)
 
