@@ -79,9 +79,9 @@ dev-setup: bandit safety black coverage flake8
 
 ## Run the security test (bandit + safety)
 security-test:
-	$(call execute_in_env, safety scan -r lambda/extract/requirements.txt)
-	$(call execute_in_env, safety scan -r lambda/load/requirements.txt)
-	$(call execute_in_env, safety scan -r lambda/transform/requirements.txt)
+	$(call execute_in_env, safety check -r lambda/extract/requirements.txt)
+	$(call execute_in_env, safety check -r lambda/load/requirements.txt)
+	$(call execute_in_env, safety check -r lambda/transform/requirements.txt)
 	$(call execute_in_env, bandit -lll lambda/**/*.py)
 
 
