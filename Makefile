@@ -63,10 +63,6 @@ safety:
 black:
 	$(call execute_in_env, $(PIP) install black)
 
-## Install coverage, a tool for measuring code coverage in tests.
-coverage:
-	$(call execute_in_env, $(PIP) install coverage)
-
 
 ## Install flake8, a pep8 check.
 flake8:
@@ -79,7 +75,7 @@ pytest:
 
 
 ## Set up dev requirements (bandit, safety, black)
-dev-setup: bandit safety black coverage flake8 pytest
+dev-setup: bandit safety black flake8 pytest
 
 # Build / Run
 
@@ -99,11 +95,5 @@ run-black:
 unit-test:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vv)
 
-## Run the coverage tests
-check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=lambda/extract/src --cov=lambda/load/src --cov=lambda/transform/src lambda/extract/tests lambda/load/tests lambda/transform/tests)
-
-
-
 ## Run all checks
-run-checks: security-test run-black unit-test check-coverage
+run-checks: security-test run-black unit-test 
