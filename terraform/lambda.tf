@@ -13,3 +13,4 @@ data "archive_file" "archive_extract_lambda" {
   source_file = "${path.module}/../lambda/extract/handler.py"
   output_path = "${path.module}/../extract_lambda_func.zip"
 }
+
