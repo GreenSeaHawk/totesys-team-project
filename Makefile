@@ -91,7 +91,7 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vvrP --testdox)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vv)
 
 ## Run the coverage tests
 check-coverage:
