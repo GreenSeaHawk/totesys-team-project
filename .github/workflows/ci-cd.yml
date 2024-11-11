@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: '3.13.0'
 
-  install-dependencies:
+  build-and-test:
     needs: setup-python  
     runs-on: ubuntu-latest
     steps:
@@ -28,15 +28,8 @@ jobs:
         run: |
           make create-environment
           make requirements
-
-  run-tests:
-    needs: install-dependencies  # Ensures dependencies are installed before running tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+          make dev-setup
 
       - name: Run Development Checks
         run: |
-          make dev-setup
           make run-checks
