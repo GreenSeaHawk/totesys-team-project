@@ -93,9 +93,9 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/extract -vv)
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/transform -vv)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/extract -vv --continue-on-collection-errors)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv --continue-on-collection-errors)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/transform -vv --continue-on-collection-errors)
 
 ## Run all checks
 run-checks: security-test unit-test 
