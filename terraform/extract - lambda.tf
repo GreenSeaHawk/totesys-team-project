@@ -19,7 +19,7 @@ data "archive_file" "archive_extract_lambda" {
 }
 
 # Zip extract layer requirements to local file
-data "archive_file" "requirements_layer" {
+data "archive_file" "extract_requirements_layer" {
     type = "zip"
     source_dir = "${path.module}/../lambda/extract/" #complete this when path to layer known
     output_path = "${path.module}/../extract_lambda_layer.zip"
@@ -33,7 +33,7 @@ resource "aws_lambda_layer_version" "extract_lambda_layer" {
 
 # Create rule to trigger every 5 mins
 resource "aws_cloudwatch_event_rule" "trigger_extract_5_mins" {
-    name = "trigger extract 5 mins"
+    name = "trigger_extract_5_mins"
     description = "Triggers extract lambda func every 5 mins"
     schedule_expression = "rate(5 minutes)"
 }
