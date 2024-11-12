@@ -16,7 +16,7 @@ provider "aws" {
   region = "eu-west-2"
   default_tags {
     tags = {
-      ProjectName  = "Totesys Group Project"
+      ProjectName  = "Totesys Cimmeria Project"
       DeployedFrom = "Terraform"
       Repository   = "totesys-team-project"
     }
