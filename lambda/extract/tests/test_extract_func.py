@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 
 def test_extract_data_from_table():
     mock_connection = MagicMock()
-    #mock_cursor = mock_connection.cursor()
     sample_data = [{
         "id" : 101,
         "name" : "charlie"

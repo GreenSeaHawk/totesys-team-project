@@ -40,11 +40,9 @@ def test_get_db_credentials_with_secret_value_not_found(secrets_client):
     secrets_client.create_secret(
         Name=secret_name, SecretString=json.dumps(secret_value)
     )
-    # Act
-    result = get_db_credentials(secret_name="my-database-connection1")
-
     # Assert
-    assert result == "The Secret name could not be found, please check."
+    with pytest.raises(Exception, match="The Secret name could not be found, please check."):
+       get_db_credentials(secret_name="my-database-connection1")
 
 
 @patch("src.dbconnection.get_db_credentials")
@@ -88,5 +86,5 @@ def test_connect_to_db_when_database_error(mock_connect, mock_get_db_credentials
             'port' : 1000
     }
     mock_connect.side_effect=DatabaseError('Database connection failed')
-    with pytest.raises(DatabaseError, match="Database connection failed"):
+    with pytest.raises(DatabaseError, match="Unfortunately, some database connectivity error occured."):
         connect_to_db()
