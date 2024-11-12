@@ -231,7 +231,7 @@ store a timestamp of when the lambda function was last run ins Prccessed zone bu
     dim_payment_type:
         collect data from payment_type folder in ingestion bucket:
             filenames = list_all_filenames_in_s3(Bucket==IngestionBucket, prefix='payment_type/')
-            design_data = get_data_from_files(Bucket=IngestionBucket, filenames)
+            design_data = get_data_from_files(Bucket=IngestionBucket, filenames)git 
 
         Transform data from this:
             {
