@@ -46,7 +46,7 @@ resource "aws_cloudwatch_event_target" "check_extract_5_mins" {
 }
 
 # permissions to check extract_lambda_func
-resource "aws_lambda_permission" "allow_cloudwatch_to_check_extract" {
+resource "aws_lambda_permission" "allow_cloudwatch_execute_extract" {
     statement_id = "AllowExecutionFromCloudWatch"
     action = "lambda:InvokeFunction"
     function_name = aws_lambda_function.extract_lambda_func.function_name

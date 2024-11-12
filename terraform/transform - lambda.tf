@@ -30,3 +30,24 @@ resource "aws_lambda_layer_version" "transform_lambda_layer" {
   filename   = "${path.module}/../transform_lambda_layer.zip"
   layer_name = "transform_lambda_layer"
 }
+
+
+# Trigger for transform if something added to raw data bucket
+resource "aws_s3_bucket_notification" "aws_transform_lambda_trigger" {
+  bucket = totesys_data_bucket.bucket.id
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.transform_lambda_func.arn
+    events              = ["s3:ObjectCreated:*"]
+
+  }
+}
+
+# Permissions for s3 bucket to trigger transform func
+resource "aws_lambda_permission" "allow_s3_bucket_to_execute_transform" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.transform_lambda_func.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = "arn:aws:s3:::${totesys_data_bucket.bucket.id}"
+}
+
