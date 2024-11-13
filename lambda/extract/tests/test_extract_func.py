@@ -15,8 +15,8 @@ def test_extract_data_from_table():
     }]
     sample_df = pd.DataFrame(sample_data)
     pd.read_sql = MagicMock(return_value=sample_df)
-    result = extract_table_data(mock_connection, "test-table")
-    pd.read_sql.assert_called_once_with('SELECT * FROM test-table', mock_connection)
+    result = extract_table_data(mock_connection, "test-table", '1900-01-01')
+    pd.read_sql.assert_called_once_with("SELECT * FROM test-table WHERE created_at > '1900-01-01' OR last_updated > '1900-01-01'", mock_connection)
     assert isinstance(result, pd.DataFrame)
     assert result.equals(sample_df)
 

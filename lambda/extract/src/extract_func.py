@@ -2,11 +2,18 @@ import pg8000
 import json
 import pandas as pd
 
-def extract_table_data(db_conn, table_name):
+
+def extract_table_data(db_conn, table_name, last_ran):
     """extracting data from a specified table and returning it as a dataframe"""
-    query = f"SELECT * FROM {table_name}"
+    query = f"SELECT * FROM {table_name} WHERE created_at > '{last_ran}' OR last_updated > '{last_ran}'"
     # result = db_conn(query)
     return pd.read_sql(query,db_conn)
+
+# def extract_table_data(db_conn, table_name):
+#     """extracting data from a specified table and returning it as a dataframe"""
+#     query = f"SELECT * FROM {table_name}"
+#     # result = db_conn(query)
+#     return pd.read_sql(query,db_conn)
 
 def serialise_data(data, format='json'):
     """converts data into a serialised format: json, csv, parquet"""

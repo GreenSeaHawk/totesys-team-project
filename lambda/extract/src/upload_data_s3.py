@@ -29,15 +29,27 @@ def upload_raw_data_to_s3(bucket_name, data, table_name):
         error_message = f"Failed to upload data to s3 at {s3_key}:{e.response['Error']['Message']}"
         raise Exception(error_message) from e
 
-def cross_compare_data(database_data, s3_data):
-    """Compare the data from the database to the data in the ingestion zone on the s3 bucket."""
-    if s3_data is None:
-        print("Sorry, no S3 data available for comparison.")
-        return None
+    #create last_ran file that stores timestamp of when our lambda function has been run
+    #retrieve last_ran timestamp from s3
+    #query the db for new or updated records:SELECT * FROM table_name WHERE last_updated OR created_at > last_ran
+    #upload to s3 with current stamp
 
-    #Identify the differences (assuming both are dataframes)
-    # comparison_df 
-    # new_records which were NOT already present in s3
-    # missing_records which are no longer present in the database
+def get_last_ran(bucket_name):
+    """retrieves timestamp from the last_ran file in s3, 
+    if the file doesn't exist it returns a default timestamp"""
+    s3_client = boto3.client("s3")
+    try:
+        response = s3_client.get_object(Bucket=bucket_name, Key= "last_ran.txt")
+        last_ran = response['Body'].read().decode('utf-8')
+        return datetime.fromisoformat(last_ran)
+    except s3_client.exceptions.NoSuchKey:
+        return datetime(1900,1,1)
+    
+def update_last_ran_s3(bucket_name):
+    """after processing update the last_ran file in s3 with the current timestamp"""
+    s3_client = boto3.client("s3")
+    current_time = datetime.now().isoformat()
+    s3_client.put_object(Bucket=bucket_name, Key= "last_ran.txt", Body= current_time)
 
-    # return new_records, missing_records
+    
+
