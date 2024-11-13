@@ -1,6 +1,6 @@
 import pandas as pd
 
-'''I need to access the data from counterparty, address'''
+'''Need to access the data from counterparty, address'''
 ''' counterparty_id --> counterparty_id
     counterparty_legal_name --> counter_legal_name
     counter_party_legal_address_id references the address table
