@@ -90,73 +90,68 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
     file_key_4 = "address/address_19600101000000.json"
     file_key_5 = "address/address_20800101000000.json"
     file_key_6 = "address/address_20900101000000.json"
-    s3.put_object(
-        Bucket='ingestion_bucket', Key=file_key_3, Body=json_content_1
-    )
-    s3.put_object(
-        Bucket='ingestion_bucket', Key=file_key_4, Body=json_content_1
-    )
-    s3.put_object(
-        Bucket='ingestion_bucket', Key=file_key_5, Body=json_content_1
-    )
-    s3.put_object(
-        Bucket='ingestion_bucket', Key=file_key_6, Body=json_content_1
-    )
-    s3.put_object(
-        Bucket='ingestion_bucket', Key=file_key_1, Body=json_content_1
-    )
-    s3.put_object(
-        Bucket='ingestion_bucket', Key=file_key_2, Body=json_content_2
-    )
+    s3.put_object(Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1)
+    s3.put_object(Bucket="ingestion_bucket", Key=file_key_4, Body=json_content_1)
+    s3.put_object(Bucket="ingestion_bucket", Key=file_key_5, Body=json_content_1)
+    s3.put_object(Bucket="ingestion_bucket", Key=file_key_6, Body=json_content_1)
+    s3.put_object(Bucket="ingestion_bucket", Key=file_key_1, Body=json_content_1)
+    s3.put_object(Bucket="ingestion_bucket", Key=file_key_2, Body=json_content_2)
+
 
 class TestGetDataFromFiles:
-    def test_returns_list(self,populated_ingestion_bucket):
-        files = ["payment_type/payment_type_20220101000000.json", "payment_type/payment_type_20230101000000.json"]
-        assert isinstance(get_data_from_files('ingestion_bucket', files), list)
+    def test_returns_list(self, populated_ingestion_bucket):
+        files = [
+            "payment_type/payment_type_20220101000000.json",
+            "payment_type/payment_type_20230101000000.json",
+        ]
+        assert isinstance(get_data_from_files("ingestion_bucket", files), list)
 
-    def test_returns_data_from_specified_files(self,populated_ingestion_bucket):
-        files = ["payment_type/payment_type_20220101000000.json", "payment_type/payment_type_20230101000000.json"]
-        result = get_data_from_files(Bucket='ingestion_bucket', list_of_files=files)
+    def test_returns_data_from_specified_files(self, populated_ingestion_bucket):
+        files = [
+            "payment_type/payment_type_20220101000000.json",
+            "payment_type/payment_type_20230101000000.json",
+        ]
+        result = get_data_from_files(Bucket="ingestion_bucket", list_of_files=files)
         expected = [
-        {
-            "payment_type_id": 1,
-            "payment_type_name": "card",
-            "created_at": "20230101",
-            "last_updated": "20230101",
-        },
-        {
-            "payment_type_id": 2,
-            "payment_type_name": "card",
-            "created_at": "20230101",
-            "last_updated": "20230101",
-        },
-        {
-            "payment_type_id": 3,
-            "payment_type_name": "card",
-            "created_at": "20230101",
-            "last_updated": "20230101",
-        },
-        {
-            "payment_type_id": 4,
-            "payment_type_name": "card",
-            "created_at": "20230101",
-            "last_updated": "20230101",
-        },
-        {
-            "payment_type_id": 5,
-            "payment_type_name": "card",
-            "created_at": "20230101",
-            "last_updated": "20230101",
-        },
-        {
-            "payment_type_id": 6,
-            "payment_type_name": "card",
-            "created_at": "20230101",
-            "last_updated": "20230101",
-        },
-    ]
+            {
+                "payment_type_id": 1,
+                "payment_type_name": "card",
+                "created_at": "20230101",
+                "last_updated": "20230101",
+            },
+            {
+                "payment_type_id": 2,
+                "payment_type_name": "card",
+                "created_at": "20230101",
+                "last_updated": "20230101",
+            },
+            {
+                "payment_type_id": 3,
+                "payment_type_name": "card",
+                "created_at": "20230101",
+                "last_updated": "20230101",
+            },
+            {
+                "payment_type_id": 4,
+                "payment_type_name": "card",
+                "created_at": "20230101",
+                "last_updated": "20230101",
+            },
+            {
+                "payment_type_id": 5,
+                "payment_type_name": "card",
+                "created_at": "20230101",
+                "last_updated": "20230101",
+            },
+            {
+                "payment_type_id": 6,
+                "payment_type_name": "card",
+                "created_at": "20230101",
+                "last_updated": "20230101",
+            },
+        ]
         assert result == expected
-    
-    def test_returns_data_if_no_files(self,populated_ingestion_bucket):
-        result = get_data_from_files(Bucket='ingestion_bucket', list_of_files=[])
+
+    def test_returns_data_if_no_files(self, populated_ingestion_bucket):
+        result = get_data_from_files(Bucket="ingestion_bucket", list_of_files=[])
         assert result == []
