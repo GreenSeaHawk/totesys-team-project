@@ -19,7 +19,7 @@ counterparty_data_sample = [
     {"counterparty_id": 4, "counterparty_legal_name": "Stark Industries", "legal_address_id": 4, "commercial_contact": "Tony Stark", "delivery_contact": "Pepper Potts"},
     {"counterparty_id": 5, "counterparty_legal_name": "Wayne Enterprises", "legal_address_id": 5, "commercial_contact": "Bruce Wayne", "delivery_contact": None}
 ]
-expected_json_output = [
+expected_output = [
     {
         'counterparty_id':1,
         'counterparty_legal_name':'Acme Corp',
@@ -79,9 +79,9 @@ def test_dim_counterparty_happy_case():
         counterparty_data_sample, 
         address_data_sample
         )
-    expected_output = json.dumps(expected_json_output, separators=(',',':'))
+    expected_json_output = json.dumps(expected_output, separators=(',',':'))
 
-    assert output == expected_output
+    assert output == expected_json_output
 
 def test_returns_error_if_counterparty_data_is_empty():
     with pytest.raises(Exception, match='Error, counterparty_data is empty'):

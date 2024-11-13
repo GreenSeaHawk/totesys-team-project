@@ -23,7 +23,7 @@ currency_data_sample = [
     }
 ]
 
-expected_json_output = [
+expected_output = [
     {
         "currency_id": 1,
         "currency_code": "USD",
@@ -43,9 +43,9 @@ expected_json_output = [
 
 def test_dim_currency_happy_case():
     output = transform_to_dim_currency(currency_data_sample)
-    expected_output = json.dumps(expected_json_output, separators=(',',':'))
+    expected_json_output = json.dumps(expected_output, separators=(',',':'))
 
-    assert output == expected_output
+    assert output == expected_json_output
 
 def test_returns_error_if_counterparty_data_is_empty():
     with pytest.raises(Exception, match='Error, currency_data is empty'):
