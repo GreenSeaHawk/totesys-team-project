@@ -17,7 +17,10 @@ def transform_to_dim_counterparty(counterparty_data, address_data):
     '''Counterparty_data and address_data should be a list of dictionaries 
     in json format so convert the tables needed to a dataframe and then 
     merge on address_id = legal_address_id'''
-
+    if not counterparty_data:
+        raise Exception('Error, counterparty_data is empty')
+    if not address_data:
+        raise Exception('Error, address_data is empty')
     counterparty_df = pd.DataFrame(counterparty_data)
     address_df = pd.DataFrame(address_data)
 

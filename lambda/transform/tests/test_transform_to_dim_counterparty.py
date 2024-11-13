@@ -1,4 +1,5 @@
 import json
+import pytest
 from src.transform_to_dim_counterparty import transform_to_dim_counterparty
 
 '''Set up some sample data have used a lot of data to check the effect
@@ -79,7 +80,14 @@ def test_dim_counterparty_happy_case():
         address_data_sample
         )
     expected_output = json.dumps(expected_json_output, separators=(',',':'))
-    print(expected_output)
-    print(output)
+
     assert output == expected_output
+
+def test_returns_error_if_counterparty_data_is_empty():
+    with pytest.raises(Exception, match='Error, counterparty_data is empty'):
+        transform_to_dim_counterparty([],address_data_sample)
+
+def test_returns_error_if_address_data_is_empty():
+    with pytest.raises(Exception, match='Error, address_data is empty'):
+        transform_to_dim_counterparty(counterparty_data_sample,[])
 
