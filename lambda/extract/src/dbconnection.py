@@ -1,4 +1,3 @@
-# from pg8000.native import Connection
 import pg8000
 import boto3
 import json

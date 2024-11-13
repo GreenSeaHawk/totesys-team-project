@@ -7,6 +7,7 @@
 
 import boto3
 import logging
+import os
 from datetime import datetime
 from src.dbconnection import connect_to_db, close_db_connection, get_db_credentials
 from src.extract_func import extract_table_data, serialise_data
@@ -16,11 +17,11 @@ from pg8000 import DatabaseError
 # Set up logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+TABLES = ["counterparty", "currency", "department", "design", "staff", "sales_order", "address", "payment", "purchase_order", "payment_type", "transaction"]
 
-
-def lambda_handler(event, context):
-    BUCKET_NAME = "totesys-state-bucket-cimmeria"
-    TABLES = ["counterparty", "currency", "department", "design", "staff", "sales_order", "address", "payment", "purchase_order", "payment_type", "transaction"]
+def lambda_handler(event, context, bucket_name="totesys-state-bucket-cimmeria"):
+    BUCKET_NAME = bucket_name
+    #BUCKET_NAME = os.getenv("BUCKET_NAME")
     db_conn = connect_to_db()
     try:
         # establishing the database connection
