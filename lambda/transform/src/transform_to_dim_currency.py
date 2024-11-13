@@ -1,6 +1,8 @@
 import pandas as pd
 from iso4217 import Currency # Need to add to requirements file
 
+'''Probably slightly overcomplicated it by turning it into a dataframe
+but it works.'''
 '''Need to access data from currency and use iso4217 to
 convert currency_code to currency_name
 example of iso4217: print(Currency('GBP').currency_name) # 'Pound Sterling'
