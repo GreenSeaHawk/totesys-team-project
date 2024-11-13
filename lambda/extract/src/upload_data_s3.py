@@ -7,13 +7,6 @@ import boto3
 from botocore.exceptions import ClientError
 from datetime import datetime
 
-def generate_unique_filename(table_name, extension="json"):
-    """Generate a unique filename with the table name and the current timestamp"""
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    year = datetime.now().strftime("%Y")
-    month = datetime.now().strftime("%m")
-    return f"{table_name}/{year}/{month}/{table_name}_{timestamp}.{extension}"
-
 def upload_raw_data_to_s3(bucket_name, data, table_name):
     """Upload serialised data to S3 with a unique file name"""
     s3_client = boto3.client("s3")
@@ -52,4 +45,12 @@ def update_last_ran_s3(bucket_name):
     s3_client.put_object(Bucket=bucket_name, Key= "last_ran.txt", Body= current_time)
 
     
+# ###############################
+
+# def generate_unique_filename(table_name, extension="json"):
+#     """Generate a unique filename with the table name and the current timestamp"""
+#     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+#     year = datetime.now().strftime("%Y")
+#     month = datetime.now().strftime("%m")
+#     return f"{table_name}/{year}/{month}/{table_name}_{timestamp}.{extension}"
 

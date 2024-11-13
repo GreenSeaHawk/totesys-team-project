@@ -86,5 +86,5 @@ def test_connect_to_db_when_database_error(mock_connect, mock_get_db_credentials
             'port' : 1000
     }
     mock_connect.side_effect=DatabaseError('Database connection failed')
-    with pytest.raises(DatabaseError, match="Unfortunately, some database connectivity error occured."):
+    with pytest.raises(DatabaseError, match="Unfortunately, some database connectivity error occurred."):
         connect_to_db()
