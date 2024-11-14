@@ -10,6 +10,8 @@ convert each of created_at, last_updated, agreed_delivery_date and
 agreed_payment_date to a date in the format yyyy-mm-dd and then create
 a table for each of these.
 
+Also need payment_data as fact_payment references the dim_date table.
+
 created_at (timestamp) --> created_date (date: yyyy-mm-dd)
 last_updated (timestamp) --> last_updated_date (date: yyyy-mm-dd)
 agreed_delivery_date (varchar in form yyyy-mm-dd) 
@@ -17,17 +19,29 @@ agreed_delivery_date (varchar in form yyyy-mm-dd)
 agreed_payment_date (varchar in form yyyy-mm-dd) 
 --> agreed_payment_date (date: yyyy-mm-dd)'''
 
-def transform_to_dim_date(sales_order_data):
-    '''Raise error if data is empty'''
+def transform_to_dim_date(sales_order_data, payment_data):
+    '''Raise error if data is empty, I don't know if this
+    is super important in this case and we might want the
+    function to still run if one of these sets of data
+    is empty. Currently the function won't run if either
+    of the data sets is empty'''
     if not sales_order_data:
         raise Exception('Error, sales_order_data is empty')
-    '''Create list of dates from each of the 4 columns'''
+    if not payment_data:
+        raise Exception('Error, payment_data is empty')
+    
+    '''Create list of dates from each of the 4 columns of
+    sales_order_data'''
     list_of_dates = []
     for sale in sales_order_data:
         list_of_dates.append(sale["created_at"][:10])
         list_of_dates.append(sale["last_updated"][:10])
         list_of_dates.append(sale["agreed_delivery_date"])
         list_of_dates.append(sale["agreed_payment_date"])
+    '''Add the dates from payment_data'''
+    for payment in payment_data:
+        list_of_dates.append(payment["payment_date"])
+
     '''Remove duplicates'''
     list_of_unique_dates = list(dict.fromkeys(list_of_dates))
 
