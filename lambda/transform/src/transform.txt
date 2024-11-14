@@ -37,9 +37,9 @@ Processed zone bucket layout:
     -dim_transaction
 
 
-
-store a timestamp of when the lambda function was last run ins Prccessed zone bucket:
-    last_run = yy:mm:dd:hh:mm
+last_run
+    store a timestamp of when the lambda function was last run ins Prccessed zone bucket:
+        last_run = yy:mm:dd:hh:mm
 
 ##############################################################################################################################################################################################################################################################################################################################################################################
                                                     Collect data from ingestion bucket:
