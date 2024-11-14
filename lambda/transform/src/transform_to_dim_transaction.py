@@ -10,7 +10,10 @@ def transform_to_dim_transaction(transaction_data):
     for transaction in transaction_data:
         temp_dict = {
             "transaction_id": transaction["transaction_id"],
-            "transaction_name": transaction["transaction_name"]
+            "transaction_type": transaction["transaction_type"],
+            "sales_order_id": transaction["sales_order_id"],
+            "purchase_order_id": transaction["purchase_order_id"]
+
         }
         dim_transaction_entries.append(temp_dict)
     '''Have used separators to keep the format the same as the other tables
