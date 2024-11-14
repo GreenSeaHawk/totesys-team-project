@@ -2,11 +2,11 @@
 
 resource "aws_lambda_function" "extract_lambda_func" {
     function_name = "extract_lambda_func"
-    filename = "${path.module}/../extract_lambda_func.zip"
+    filename = "${path.module}/../lambda/extract/handler.py" #change depending on lambda extract file
     role = aws_iam_role.extract_lambda_role.arn
-    handler = "handler.lambda_handler" # this might not be the correct path
-    runtime = "python3.13"
-    timeout = 60
+    handler = "handler.lambda_handler" # change depending on lambda extract file
+    runtime = "python3.9"
+    timeout = 10
     source_code_hash = data.archive_file.archive_extract_lambda.output_base64sha256
     layers = [aws_lambda_layer_version.extract_lambda_layer.arn]
 }
@@ -14,7 +14,7 @@ resource "aws_lambda_function" "extract_lambda_func" {
 # Zip extract lambda handler to local zip file
 data "archive_file" "archive_extract_lambda" {
   type        = "zip"
-  source_file = "${path.module}/../lambda/extract/src"
+  source_file = "${path.module}/../lambda/extract/handler.py"
   output_path = "${path.module}/../extract_lambda_func.zip"
 }
 

@@ -2,11 +2,11 @@
 
 resource "aws_lambda_function" "load_lambda_func" {
     function_name = "load_lambda_func"
-    filename = "${path.module}/../load_lambda_func.zip" #change depending on lambda load file
+    filename = "${path.module}/../lambda/load/handler.py" #change depending on lambda load file
     role = aws_iam_role.load_lambda_role.arn
     handler = "handler.lambda_handler" # change depending on lambda load file
-    runtime = "python3.13"
-    timeout = 60
+    runtime = "python3.9"
+    timeout = 10
     source_code_hash = data.archive_file.archive_load_lambda.output_base64sha256
     layers = [aws_lambda_layer_version.load_lambda_layer.arn]
 }
@@ -14,7 +14,7 @@ resource "aws_lambda_function" "load_lambda_func" {
 # Zip load lambda handler to local zip file
 data "archive_file" "archive_load_lambda" {
   type        = "zip"
-  source_file = "${path.module}/../lambda/load/src"
+  source_file = "${path.module}/../lambda/load/handler.py"
   output_path = "${path.module}/../load_lambda_func.zip"
 }
 

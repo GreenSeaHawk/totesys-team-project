@@ -2,11 +2,11 @@
 
 resource "aws_lambda_function" "transform_lambda_func" {
     function_name = "transform_lambda_func"
-    filename = "${path.module}/../transform_lambda_func.zip" #change depending on lambda transform file
+    filename = "${path.module}/../lambda/transform/handler.py" #change depending on lambda transform file
     role = aws_iam_role.transform_lambda_role.arn
     handler = "handler.lambda_handler" # change depending on lambda transform file
-    runtime = "python3.13"
-    timeout = 60
+    runtime = "python3.9"
+    timeout = 10
     source_code_hash = data.archive_file.archive_transform_lambda.output_base64sha256
     layers = [aws_lambda_layer_version.transform_lambda_layer.arn]
 }
@@ -14,7 +14,7 @@ resource "aws_lambda_function" "transform_lambda_func" {
 # Zip transform lambda handler to local zip file
 data "archive_file" "archive_transform_lambda" {
   type        = "zip"
-  source_file = "${path.module}/../lambda/transform/src"
+  source_file = "${path.module}/../lambda/transform/handler.py"
   output_path = "${path.module}/../transform_lambda_func.zip"
 }
 
