@@ -12,6 +12,7 @@ address_data_sample = [
     {"address_id": 4, "address_line_1": "321 Pine Road", "address_line_2": "Floor 3", "district": "Midtown", "city": "Central City", "postal_code": "13579", "country": "USA", "phone": "+1-555-1112"},
     {"address_id": 5, "address_line_1": "654 Cedar Lane", "address_line_2": None, "district": "Westside", "city": "Star City", "postal_code": "24680", "country": "USA", "phone": "+1-555-1314"}
 ]
+
 counterparty_data_sample = [
     {"counterparty_id": 1, "counterparty_legal_name": "Acme Corp", "legal_address_id": 1, "commercial_contact": "John Doe", "delivery_contact": "Jane Smith"},
     {"counterparty_id": 2, "counterparty_legal_name": "Globex Inc.", "legal_address_id": 2, "commercial_contact": "Emily Davis", "delivery_contact": None},
@@ -19,6 +20,7 @@ counterparty_data_sample = [
     {"counterparty_id": 4, "counterparty_legal_name": "Stark Industries", "legal_address_id": 4, "commercial_contact": "Tony Stark", "delivery_contact": "Pepper Potts"},
     {"counterparty_id": 5, "counterparty_legal_name": "Wayne Enterprises", "legal_address_id": 5, "commercial_contact": "Bruce Wayne", "delivery_contact": None}
 ]
+
 expected_output = [
     {
         'counterparty_id':1,
