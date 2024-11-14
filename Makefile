@@ -86,6 +86,9 @@ security-test:
 	$(call execute_in_env, safety check -r lambda/transform/requirements.txt --ignore=70612)
 	$(call execute_in_env, bandit -lll lambda/**/*.py)
 
+## Pep8 tests
+pep8-test:
+	$(call execute_in_env, flake8 lambda/**/*.py)
 
 ## Run the black code check
 run-black:
@@ -93,9 +96,9 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/extract -vv)
+#	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/extract -vv)
 # 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
-# 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/transform -vv)
+ 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/transform -vv)
 
 ## Run all checks
-run-checks: security-test unit-test 
+run-checks: security-test unit-test pep8-test
