@@ -23,7 +23,7 @@ payment_type_sample_data = [
   }
 ]
 
-expected_output = payment_type_sample_data = [
+expected_output = [
   {
     "payment_type_id": 1,
     "payment_type_name": "SALES_RECEIPT"
