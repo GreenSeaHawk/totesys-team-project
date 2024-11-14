@@ -18,3 +18,4 @@ def transform_to_dim_design(design_data):
     '''Have used separators to keep the format the same as the other tables
     where .to_json from pandas outputs without whitespace'''
     return json.dumps(dim_location_entries, separators=(',',':'))
+
