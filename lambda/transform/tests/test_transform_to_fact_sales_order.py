@@ -69,7 +69,7 @@ expected_output = [
     "agreed_delivery_location_id":21
   }
 ]
-def test_dim_date_happy_case():
+def test_to_fact_sales_order_happy_case():
     output = transform_to_fact_sales_order(sales_sample_data)
     expected_json_output = json.dumps(expected_output, separators=(',',':'))
 

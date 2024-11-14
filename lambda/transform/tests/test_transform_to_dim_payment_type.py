@@ -39,12 +39,12 @@ expected_output = [
 ]
 
 
-def test_dim_location_happy_case():
+def test_dim_payment_type_happy_case():
     output = transform_to_dim_payment_type(payment_type_sample_data)
     expected_json_output = json.dumps(expected_output, separators=(',',':'))
 
     assert output == expected_json_output
 
-def test_returns_error_if_sales_order_data_is_empty():
+def test_returns_error_if_payment_type_data_is_empty():
     with pytest.raises(Exception, match='Error, payment_type_data is empty'):
         transform_to_dim_payment_type([])

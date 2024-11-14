@@ -76,7 +76,7 @@ expected_output = [
   }
 ]
 
-def test_dim_counterparty_happy_case():
+def test_dim_staff_happy_case():
     '''Normalise the data so that it doesn't give an assertion
     error due to whitespace or different quotes'''
     output = transform_to_dim_staff(

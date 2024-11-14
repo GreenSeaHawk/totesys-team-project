@@ -36,6 +36,6 @@ def test_dim_location_happy_case():
 
     assert output == expected_json_output
 
-def test_returns_error_if_sales_order_data_is_empty():
+def test_returns_error_if_address_data_is_empty():
     with pytest.raises(Exception, match='Error, address_data is empty'):
         transform_to_dim_location([])

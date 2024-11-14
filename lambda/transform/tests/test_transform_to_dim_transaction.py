@@ -56,6 +56,6 @@ def test_dim_transaction_happy_case():
 
     assert output == expected_json_output
 
-def test_returns_error_if_sales_order_data_is_empty():
+def test_returns_error_if_transaction_data_is_empty():
     with pytest.raises(Exception, match='Error, transaction_data is empty'):
         transform_to_dim_transaction([])
