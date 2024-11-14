@@ -82,7 +82,7 @@ def test_dim_counterparty_happy_case():
         address_data_sample
         )
     expected_json_output = json.dumps(expected_output, separators=(',',':'))
-
+    print(output)
     assert output == expected_json_output
 
 def test_returns_error_if_counterparty_data_is_empty():
