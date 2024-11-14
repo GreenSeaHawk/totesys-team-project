@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 from pg8000 import DatabaseError
 from unittest.mock import patch, MagicMock
 
+
 # Initialize mock Secrets Manager
 @pytest.fixture
 def secrets_client():
@@ -65,15 +66,20 @@ def test_connect_to_db_success(mock_connect, mock_get_db_credentials):
             port = 1000)
     assert conn == mock_conn
 
-@patch("src.dbconnection.get_db_credentials")
-@patch("src.dbconnection.pg8000.connect")
-def test_connect_to_db_when_no_credentials(mock_connect, mock_get_db_credentials, capsys):
-    mock_get_db_credentials.return_value = None
-    conn = connect_to_db()
-    captured = capsys.readouterr()
-    assert conn is None
-    assert "Failed to retrieve database credentials." in captured.out
-    mock_connect.assert_not_called()
+def test_connect_to_db_when_get_credentials_is_invalid():
+    invalid_cred = {
+            'user': "invalid", 
+            'password' : "invalid", 
+            'host': "invalid", 
+            'database' : "invalid", 
+            'port' : 1000
+    }
+    with patch("src.dbconnection.get_db_credentials", return_value=invalid_cred), \
+        patch("src.dbconnection.pg8000.connect", side_effect=DatabaseError('invalid_cred')):
+        with pytest.raises(DatabaseError) as e:
+            connect_to_db()
+        assert "Unfortunately, some database connectivity error occurred." in str(e.value)
+    
 
 @patch("src.dbconnection.get_db_credentials")
 @patch("src.dbconnection.pg8000.connect")

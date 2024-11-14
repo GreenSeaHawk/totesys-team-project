@@ -65,21 +65,3 @@ def test_update_last_ran_puts_current_time(setup_s3_bucket):
     stored_time = response['Body'].read().decode('utf-8')
     current_time = datetime.fromisoformat(stored_time)
     assert (datetime.now()-current_time).total_seconds() < 3
-
-    
-# @patch("src.upload_data_s3.boto3.client")
-# def test_upload_to_s3_success(mock_s3_client):
-#     # Mock the S3 client's put_object method
-#     mock_s3 = MagicMock()
-#     mock_s3_client.return_value = mock_s3
-
-#     # test paramters
-#     bucket_name = "test_bucket"
-#     data = "{'sample_key':'sample_value'}"
-#     table_name ="sample_table"
-
-#     # call the function
-#     s3_key = upload_raw_data_to_s3(bucket_name, data, table_name)
-
-#     # verify put_object was called with corrrect parameters
-#     mock_s3.put_object.assert_called_once_with(Bucket=bucket_name, Key=s3_key, Body=data, ContentType='application/json')

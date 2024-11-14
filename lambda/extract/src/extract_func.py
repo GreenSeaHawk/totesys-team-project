@@ -1,4 +1,3 @@
-import pg8000
 import json
 import pandas as pd
 

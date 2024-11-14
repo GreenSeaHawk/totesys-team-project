@@ -21,14 +21,9 @@ TABLES = ["counterparty", "currency", "department", "design", "staff", "sales_or
 
 def lambda_handler(event, context, bucket_name="totesys-state-bucket-cimmeria"):
     BUCKET_NAME = bucket_name
-    #BUCKET_NAME = os.getenv("BUCKET_NAME")
+    # establishing the database connection
     db_conn = connect_to_db()
     try:
-        # establishing the database connection
-        if db_conn is None:
-            logger.error("Database connection failed...")
-            raise DatabaseError("Database connection failed.")
-
         #  retrieve the last run timestamp from S3
         last_ran = get_last_ran(BUCKET_NAME)
 
@@ -39,12 +34,10 @@ def lambda_handler(event, context, bucket_name="totesys-state-bucket-cimmeria"):
             if not new_data.empty:
                 #serialise data to JSON format
                 serialised_data = serialise_data(new_data, format="json")
-
-            # upload the serialised data to s3 bucket
-            upload_raw_data_to_s3(BUCKET_NAME, serialised_data, table_name)
+                # upload the serialised data to s3 bucket
+                upload_raw_data_to_s3(BUCKET_NAME, serialised_data, table_name)
 
         # update the last_ran timstamp in S3
-        
         update_last_ran_s3(BUCKET_NAME)
 
 

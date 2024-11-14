@@ -24,27 +24,8 @@ def get_db_credentials(secret_name = "my-database-connection"):
         if e.response['Error']['Code'] == 'ResourceNotFoundException':
             raise Exception("The Secret name could not be found, please check.") from e
 
-    # ########
-    #  except ClientError as e:
-    #     # Handle specific errors
-    #     if e.response['Error']['Code'] == 'ResourceNotFoundException':
-    #         # Raise a new ClientError with a custom error response and operation name
-    #         error_response = {
-    #             "Error": {
-    #                 "Code": "ResourceNotFoundException",
-    #                 "Message": "The Secret name could not be found, please check."
-    #             }
-    #         }
-    #         raise ClientError(error_response, operation_name="GetSecretValue") from e
-    #     else:
-    #         raise e  # Re-raise other ClientError exceptions
-        ###########
-
-def connect_to_db():
-    credentials = get_db_credentials()
-    if not credentials:
-        print("Failed to retrieve database credentials.")
-        return None
+def connect_to_db(secret_name = "my-database-connection"):
+    credentials = get_db_credentials(secret_name)
     try:
         conn = pg8000.connect( user= credentials["user"], 
             password = credentials["password"], 
