@@ -3,8 +3,11 @@ from moto import mock_aws
 import pytest
 import os
 import json
+import random
+import string
+import time
 from pprint import pprint
-from src.list_all_files import list_all_filenames_in_s3
+from src.list_all_files import list_all_filenames_in_s3, list_all_filenames_in_s3_version2
 
 
 @pytest.fixture(scope="function")
@@ -213,3 +216,38 @@ class TestListAllFileNames:
     def test_wrong_prefix(self, populated_ingestion_bucket, transform_bucket_2025):
         with pytest.raises(NameError, match="no files in s3://ingestion_bucket/hi"):
             list_all_filenames_in_s3(Bucket="ingestion_bucket", prefix="hi")
+
+
+def generate_random_filename():
+    """Generate a random file with a timestamp"""
+    timestamp = random.randint(1000000000, 2000000000)
+    random_str = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+    return f"{random_str}_{timestamp}.json"
+
+def test_list_all_filenames_in_s3_stress(s3, create_ingestion_bucket, create_transform_bucket):
+    BUCKET_NAME = "ingestion_bucket"
+    TRANSFORM_BUCKET_NAME = "transform_bucket"
+    LAST_RUN_KEY = "last_run.json"
+
+    last_run_timestamp = 1500000000 #  as an example
+    s3.put_object( #  example timestamp
+        Bucket = TRANSFORM_BUCKET_NAME,
+        Key = LAST_RUN_KEY,
+        Body = str(last_run_timestamp)
+    )
+
+    number_of_files = 30000
+    for _ in range(number_of_files):
+        filename = generate_random_filename()
+        s3.put_object(Bucket=BUCKET_NAME, Key=filename, Body="Test content")
+
+    # measure execution time of the function
+    start_time = time.time()
+    file_names = list_all_filenames_in_s3_version2(Bucket=BUCKET_NAME)
+    end_time = time.time()
+
+    print(f"Number of files returned: {len(file_names)}")
+    print(f"Execution time: {end_time - start_time:.2f} seconds.")
+
+    assert len(file_names) > 0
+
