@@ -46,7 +46,7 @@ endef
 ## Build the environment requirements
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/extract/requirements.txt)
-	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
+#	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
 	$(call execute_in_env, $(PIP) install -r lambda/transform/requirements.txt)
 
 ################################################################################################################
