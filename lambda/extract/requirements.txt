@@ -8,3 +8,4 @@ pandas
 pyarrow
 black
 flake8
+moto
