@@ -186,4 +186,3 @@ def test_lambda_handler_closes_db_connection(
     lambda_handler({}, {})
     mock_connect_to_db.assert_called_once()
     mock_close_db_connection.assert_called_once_with(mock_db_conn)
-

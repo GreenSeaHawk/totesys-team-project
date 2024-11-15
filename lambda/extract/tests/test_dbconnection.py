@@ -122,4 +122,3 @@ def test_connect_to_db_when_database_error(
     ):
 
         connect_to_db()
-

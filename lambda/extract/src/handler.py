@@ -67,5 +67,5 @@ def lambda_handler(event, context):
     logger.info("Data Ingestion went fine.")
     return {
         "statusCode": 200,
-        "body": "Data Ingestion completed successfully."}
-
+        "body": "Data Ingestion completed successfully.",
+    }
