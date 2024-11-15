@@ -1,7 +1,7 @@
 # CHANGE FILE PATH NAMES WHEN KNOWN
 
 resource "aws_lambda_function" "extract_lambda_func" {
-    function_name = "src"
+    function_name = "extract_lambda_func"
     filename = "${path.module}/../src.zip"
     role = aws_iam_role.extract_lambda_role.arn
     handler = "handler.lambda_handler" # this might not be the correct path
@@ -28,7 +28,7 @@ data "archive_file" "archive_extract_lambda" {
 
 # Attach zipped extract layer to extract lambda func
 resource "aws_lambda_layer_version" "extract_lambda_layer" {
-  filename   = "${path.module}/../layers/pg8000-pandas-layer.zip"
+  filename   = "${path.module}/../layers/pg8000-panda-numpy.zip"
   layer_name = "extract_lambda_layer"
 }
 

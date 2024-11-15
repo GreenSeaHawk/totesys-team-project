@@ -7,9 +7,9 @@
 
 import logging
 
-from src.dbconnection import connect_to_db, close_db_connection
-from src.extract_func import extract_table_data, serialise_data
-from src.upload_data_s3 import (
+from dbconnection import connect_to_db, close_db_connection
+from extract_func import extract_table_data, serialise_data
+from upload_data_s3 import (
     update_last_ran_s3,
     upload_raw_data_to_s3,
     get_last_ran,
