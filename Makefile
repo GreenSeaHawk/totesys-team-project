@@ -82,8 +82,8 @@ dev-setup: bandit safety black flake8 pytest
 ## Run the security test (bandit + safety)
 security-test:
 	$(call execute_in_env, safety check -r lambda/extract/requirements.txt --ignore=70612)
+	$(call execute_in_env, safety check -r lambda/transform/requirements.txt --ignore=70612) 
 #	$(call execute_in_env, safety check -r lambda/load/requirements.txt --ignore=70612)
-	$(call execute_in_env, safety check -r lambda/transform/requirements.txt --ignore=70612)
 	$(call execute_in_env, bandit -lll lambda/**/*.py)
 
 ## Pep8 tests
@@ -97,8 +97,8 @@ run-black:
 ## Run the unit tests
 unit-test:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/extract -vv)
-#	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/transform -vv)
+#	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
 
 ## Run all checks
 run-checks: security-test unit-test pep8-test
