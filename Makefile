@@ -97,7 +97,7 @@ run-black:
 ## Run the unit tests
 unit-test:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/extract -vv)
-	# 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
+#	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/transform -vv)
 
 ## Run all checks
