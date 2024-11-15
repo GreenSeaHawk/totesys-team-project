@@ -44,10 +44,24 @@ define execute_in_env
 endef
 
 ## Build the environment requirements
-requirements: create-environment
+requirements: create-enviroment requirements-extract requirements-transform #requirements-load
+
+requirements-extract: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/extract/requirements.txt)
-#	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
+requirements-transform: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/transform/requirements.txt)
+requirements-load: load
+	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
+
+## remove the environment requirements
+uninstall-requirements: create-enviroment uninstall-requirements-extract uninstall-requirements-transform #uninstall requirements transform
+
+uninstall-requirements-extract: create-environment
+	$(call execute_in_env, $(PIP) uninstall -r lambda/extract/requirements.txt)
+uninstall-requirements-transform: create-environment
+	$(call execute_in_env, $(PIP) uninstall -r lambda/transform/requirements.txt)
+uninstall requirements transform: load
+	$(call execute_in_env, $(PIP) uninstall -r lambda/load/requirements.txt)
 
 ################################################################################################################
 # Set Up
@@ -80,25 +94,47 @@ dev-setup: bandit safety black flake8 pytest
 # Build / Run
 
 ## Run the security test (bandit + safety)
-security-test:
+security-test: security-test-extract security-test-transform #security-test-load
+security-test-extract:
 	$(call execute_in_env, safety check -r lambda/extract/requirements.txt --ignore=70612)
-	$(call execute_in_env, safety check -r lambda/transform/requirements.txt --ignore=70612) 
-#	$(call execute_in_env, safety check -r lambda/load/requirements.txt --ignore=70612)
-	$(call execute_in_env, bandit -lll lambda/**/*.py)
+	$(call execute_in_env, bandit -lll lambda/extract/*.py)
+security-test-transform:
+	$(call execute_in_env, safety check -r lambda/transform/requirements.txt --ignore=70612)
+	$(call execute_in_env, bandit -lll lambda/transform/*.py)
+security-test-load:
+	$(call execute_in_env, safety check -r lambda/load/requirements.txt --ignore=70612)
+	$(call execute_in_env, bandit -lll lambda/load/*.py)
+	
 
 ## Pep8 tests
-pep8-test:
-	$(call execute_in_env, flake8 lambda/**/*.py)
+pep8-test: pep8-test-extract pep8-test-transform #pep8-test-load
+pep8-test-extract:
+	$(call execute_in_env, flake8 lambda/extract/*.py)
+pep8-test-transform:
+	$(call execute_in_env, flake8 lambda/transform/*.py)
+pep8-test-load:
+	$(call execute_in_env, flake8 lambda/load/*.py)
 
 ## Run the black code check
-run-black:
-	$(call execute_in_env, black --line-length 79 ./lambda/**/*.py)
+run-black: run-black-extract run-black-transform run-black-load
+run-black-extract:
+	$(call execute_in_env, black --line-length 79 ./lambda/extract/*.py)
+run-black-transform:
+	$(call execute_in_env, black --line-length 79 ./lambda/transform/*.py)
+run-black-load:
+	$(call execute_in_env, black --line-length 79 ./lambda/load/*.py)
 
 ## Run the unit tests
-unit-test:
+unit-test-extract:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/lambda/extract:${PYTHONPATH}/lambda/extract/src pytest lambda/extract -vvrP --testdox)
+unit-test-transform:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/lambda/transform:${PYTHONPATH}/lambda/transform/src pytest lambda/transform -vvrP --testdox)
-#	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest lambda/load -vv)
+unit-test-load:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}:${PYTHONPATH}/lambda/load/src pytest lambda/load -vvrP --testdox)
 
 ## Run all checks
 run-checks: security-test unit-test pep8-test
+run-checks-extract:security-test-extract unit-test-extract pep8-test-extract
+run-checks-transform:security-test-transform unit-test-transform pep8-test-transform
+run-checks-extract:security-test-load unit-test-load pep8-test-load
+
