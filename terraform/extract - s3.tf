@@ -1,7 +1,7 @@
 
 # Create the data bucket for the raw data to be put into
 resource "aws_s3_bucket" "totesys_data_bucket" {
-  bucket = "totesys_data_bucket_cimmeria"
+  bucket = "totesys-data-bucket-cimmeria"
   force_destroy = true
 }
 

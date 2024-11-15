@@ -14,7 +14,7 @@ resource "aws_lambda_function" "transform_lambda_func" {
 # Zip transform lambda handler to local zip file
 data "archive_file" "archive_transform_lambda" {
   type        = "zip"
-  source_file = "${path.module}/../lambda/transform/src"
+  source_dir = "${path.module}/../lambda/transform/src"
   output_path = "${path.module}/../transform_lambda_func.zip"
 }
 
