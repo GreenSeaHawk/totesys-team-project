@@ -3,9 +3,8 @@ pytest
 boto3
 pytest-mock
 pytest-testdox
-moto[all]==4.2.9
+moto[all]
 pandas
 pyarrow
 black
 flake8
-moto
