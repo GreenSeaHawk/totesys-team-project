@@ -109,20 +109,20 @@ security-test-load:
 ## Pep8 tests
 pep8-test: pep8-test-extract pep8-test-transform #pep8-test-load
 pep8-test-extract:
-	$(call execute_in_env, flake8 lambda/extract/*.py)
+	$(call execute_in_env, flake8 lambda/extract/**/*.py)
 pep8-test-transform:
-	$(call execute_in_env, flake8 lambda/transform/*.py)
+	$(call execute_in_env, flake8 lambda/transform/**/*.py)
 pep8-test-load:
-	$(call execute_in_env, flake8 lambda/load/*.py)
+	$(call execute_in_env, flake8 lambda/load/**/*.py)
 
 ## Run the black code check
 run-black: run-black-extract run-black-transform run-black-load
 run-black-extract:
-	$(call execute_in_env, black --line-length 79 ./lambda/extract/*.py)
+	$(call execute_in_env, black --line-length 79 ./lambda/extract/**/*.py)
 run-black-transform:
-	$(call execute_in_env, black --line-length 79 ./lambda/transform/*.py)
+	$(call execute_in_env, black --line-length 79 ./lambda/transform/**/*.py)
 run-black-load:
-	$(call execute_in_env, black --line-length 79 ./lambda/load/*.py)
+	$(call execute_in_env, black --line-length 79 ./lambda/load/**/*.py)
 
 ## Run the unit tests
 unit-test-extract:
