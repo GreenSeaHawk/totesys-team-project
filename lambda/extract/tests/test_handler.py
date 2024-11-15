@@ -12,7 +12,7 @@ from moto import mock_s3
 from botocore.exceptions import ClientError
 
 # Test constants
-BUCKET_NAME = "test_bucket"
+BUCKET_NAME = "totesys_data_bucket_cimmeria"
 TABLES = ["A", "B", "C", "D"]
 
 

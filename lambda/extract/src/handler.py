@@ -6,7 +6,6 @@
 # close the db connection
 
 import logging
-import os
 
 from src.dbconnection import connect_to_db, close_db_connection
 from src.extract_func import extract_table_data, serialise_data
@@ -35,7 +34,7 @@ TABLES = [
 
 
 def lambda_handler(event, context):
-    BUCKET_NAME = os.getenv("BUCKET_NAME", "totesys_data_bucket_cimmeria")
+    BUCKET_NAME = "totesys_data_bucket_cimmeria"
     # establishing the database connection
     db_conn = connect_to_db()
     try:
