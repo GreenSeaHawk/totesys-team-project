@@ -42,4 +42,5 @@ def connect_to_db(secret_name="my-database-connection"):
 
 
 def close_db_connection(conn):
-    conn.close()
+  conn.close()
+

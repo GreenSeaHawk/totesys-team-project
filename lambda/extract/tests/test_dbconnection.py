@@ -120,4 +120,6 @@ def test_connect_to_db_when_database_error(
         DatabaseError,
         match="Some database connectivity error occurred.",
     ):
+
         connect_to_db()
+
