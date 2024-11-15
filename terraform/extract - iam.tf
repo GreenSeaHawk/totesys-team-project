@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "s3_document" {
     actions = ["s3:*"]
 
     resources = [
-      "${aws_s3_bucket.totesys_data_bucket.arn}/*", #"${aws_s3_bucket.totesys_transformed_data_bucket.arn}/*"
+      "${aws_s3_bucket.totesys_data_bucket.arn}/*","*" #"${aws_s3_bucket.totesys_transformed_data_bucket.arn}/*"
     ]
   }
 }
@@ -69,4 +69,23 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
 resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
     role = aws_iam_role.extract_lambda_role.name
     policy_arn = aws_iam_policy.cw_policy.arn
+}
+
+
+resource "aws_iam_role_policy" "sm_policy" {
+  name = "sm_access_permissions"
+  role = aws_iam_role.extract_lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "secretsmanager:GetSecretValue",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
 }
