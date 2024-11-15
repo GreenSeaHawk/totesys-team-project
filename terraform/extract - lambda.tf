@@ -18,16 +18,17 @@ data "archive_file" "archive_extract_lambda" {
   output_path = "${path.module}/../extract_lambda_func.zip"
 }
 
-# Zip extract layer requirements to local file
-data "archive_file" "extract_requirements_layer" {
-    type = "zip"
-    source_dir = "${path.module}/../lambda/extract/" #complete this when path to layer known
-    output_path = "${path.module}/../extract_lambda_layer.zip"
-}
+# ZIPPED MANUALLY
+# # Zip extract layer requirements to local file
+# data "archive_file" "extract_requirements_layer" {
+#     type = "zip"
+#     source_dir = "${path.module}/../lambda/extract/" #complete this when path to layer known
+#     output_path = "${path.module}/../extract_lambda_layer.zip"
+# }
 
 # Attach zipped extract layer to extract lambda func
 resource "aws_lambda_layer_version" "extract_lambda_layer" {
-  filename   = "${path.module}/../extract_lambda_layer.zip"
+  filename   = "${path.module}/../layers/pg8000-pandas-layer.zip"
   layer_name = "extract_lambda_layer"
 }
 
