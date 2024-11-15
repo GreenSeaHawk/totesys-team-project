@@ -4,3 +4,7 @@ boto3
 pytest-mock
 pytest-testdox
 moto[all]==4.2.9
+pandas
+pyarrow
+black
+flake8
