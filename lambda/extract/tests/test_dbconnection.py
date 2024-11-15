@@ -2,7 +2,8 @@ import pytest
 import json
 import boto3
 from src.dbconnection import get_db_credentials, connect_to_db
-from moto.secretsmanager import mock_secretsmanager
+# from moto.secretsmanager import mock_secretsmanager
+from moto import mock_aws
 from pg8000 import DatabaseError
 from unittest.mock import patch, MagicMock
 
@@ -10,7 +11,7 @@ from unittest.mock import patch, MagicMock
 # Initialize mock Secrets Manager
 @pytest.fixture
 def secrets_client():
-    with mock_secretsmanager():
+    with mock_aws():
         yield boto3.client("secretsmanager", region_name="eu-west-2")
 
 

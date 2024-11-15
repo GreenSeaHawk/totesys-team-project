@@ -8,7 +8,7 @@ import pytest
 import boto3
 from src.handler import lambda_handler
 from unittest.mock import patch, MagicMock
-from moto import mock_s3
+from moto import mock_aws
 from botocore.exceptions import ClientError
 
 # Test constants
@@ -19,7 +19,7 @@ TABLES = ["A", "B", "C", "D"]
 @pytest.fixture
 def setup_s3_bucket():
     """Mock the S3 bucket for testing with moto."""
-    with mock_s3():
+    with mock_aws():
         s3 = boto3.client("s3", region_name="eu-west-2")
         s3.create_bucket(
             Bucket=BUCKET_NAME,
