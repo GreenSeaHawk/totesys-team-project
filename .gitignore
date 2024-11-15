@@ -172,6 +172,20 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-#terraform
+# terraform
 */.terraform
 */.terraform.lock.hcl
+
+# Custom rules to include specific Lambda layer files
+# Ignore all __pycache__ and *.pyc files, except for the Lambda layer
+__pycache__/
+*.pyc
+!layers/pg8000-pandas-layer/python/lib/**/__pycache__/
+!layers/pg8000-pandas-layer/python/lib/**/*.pyc
+
+# Ignore all *.dist-info directories, except for the Lambda layer
+*.dist-info/
+!layers/pg8000-pandas-layer/python/lib/**/*.dist-info/
+
+# Specifically include the entire Lambda layer directory for libraries
+!layers/pg8000-pandas-layer/
