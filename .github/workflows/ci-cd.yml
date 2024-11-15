@@ -51,20 +51,20 @@ jobs:
         run: |
           make run-checks-transform
 
-  # build-and-test-transform:
+  # build-and-test-load:
   #   needs: setup-python  
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout code
   #       uses: actions/checkout@v2
 
-  #     - name: Install dependencies transform
+  #     - name: Install dependencies load
   #       run: |
   #         make create-environment
-  #         make requirements-transform
+  #         make requirements-load
   #         make dev-setup
 
   #     - name: Run Development Checks
   #       run: |
-  #         make run-checks-transform
+  #         make run-checks-load
 
