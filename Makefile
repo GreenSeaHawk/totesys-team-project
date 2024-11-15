@@ -136,5 +136,5 @@ unit-test-load:
 run-checks: security-test unit-test pep8-test
 run-checks-extract:security-test-extract unit-test-extract pep8-test-extract
 run-checks-transform:security-test-transform unit-test-transform pep8-test-transform
-run-checks-extract:security-test-load unit-test-load pep8-test-load
+run-checks-load:security-test-load unit-test-load pep8-test-load
 
