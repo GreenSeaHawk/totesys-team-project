@@ -1,0 +1,26 @@
+Triggered on : Completion of transform lambda function
+
+Extract data from transformed bucket:
+    
+    get object name of all recent_data
+       take most recent data by comapring file_name(which includes timestamp) to last_ran time stamp 
+       filenames = list_all_files()
+    
+    use get_object to get  the data from the parquet files
+    
+
+
+
+Upload to Data warehouse:
+    Connect to data warehouse:
+        get credentials from Secrets manager
+        
+    
+    Insert data into tables:
+        DuckDB
+        SQLAlchemy
+        convert csv and use pg8000
+    
+
+
+Update last_ran timestamp

@@ -130,7 +130,7 @@ unit-test-extract:
 unit-test-transform:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/lambda/transform:${PYTHONPATH}/lambda/transform/src pytest lambda/transform -vvrP --testdox)
 unit-test-load:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}:${PYTHONPATH}/lambda/load/src pytest lambda/load -vvrP --testdox)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/lambda/load:${PYTHONPATH}/lambda/load/src pytest lambda/load -vvrP --testdox)
 
 ## Run all checks
 run-checks: security-test unit-test pep8-test
