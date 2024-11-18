@@ -1,6 +1,6 @@
 from src.get_data_from_files import get_data_from_files
 from moto import mock_aws
-import boto3, os, pytest, json
+import boto3, os, pytest, json, time, random
 
 
 @pytest.fixture(scope="function")
@@ -97,6 +97,9 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
     s3.put_object(Bucket="ingestion_bucket", Key=file_key_1, Body=json_content_1)
     s3.put_object(Bucket="ingestion_bucket", Key=file_key_2, Body=json_content_2)
 
+def generate_mock_file_data(num_records):
+    """Generate mock JSON data with the specified number of records."""
+    return [{"id":i, "value":random.randint(1, 1000)} for i in range(num_records)]
 
 class TestGetDataFromFiles:
     def test_returns_list(self, populated_ingestion_bucket):
@@ -155,3 +158,29 @@ class TestGetDataFromFiles:
     def test_returns_data_if_no_files(self, populated_ingestion_bucket):
         result = get_data_from_files(Bucket="ingestion_bucket", list_of_files=[])
         assert result == []
+
+    def test_get_data_from_files_stress(self, s3, create_ingestion_bucket):
+        NUM_FILES = 1000
+        RECORDS_PER_FILE = 100
+
+        list_of_files = []
+        for i in range(NUM_FILES):
+            file_name = f"file_{i}.json"
+            file_data = generate_mock_file_data(RECORDS_PER_FILE)
+            s3.put_object(
+                Bucket="ingestion_bucket",
+                Key=file_name,
+                Body=json.dumps(file_data)
+            )
+            list_of_files.append(file_name)
+
+        start_time = time.time()
+        data = get_data_from_files(Bucket="ingestion_bucket", list_of_files=list_of_files)
+        end_time = time.time()
+
+        print(f"Number of files processed: {len(list_of_files)}")
+        print(f"Number of records returned: = {len(data)}")
+        print(f"Execution time: {end_time - start_time:.2f} seconds")
+
+        assert len(data) == NUM_FILES * RECORDS_PER_FILE
+        assert all("id" in record and "value" in record for record in data)
