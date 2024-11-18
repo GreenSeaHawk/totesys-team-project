@@ -34,7 +34,7 @@ TABLES = [
 
 
 def lambda_handler(event, context):
-    BUCKET_NAME = os.getenv("BUCKET_NAME", "totesys-data-bucket")
+    BUCKET_NAME = os.getenv("BUCKET_NAME", "totesys-data-bucket-cimmeria")
     # BUCKET_NAME = "totesys-data-bucket-cimmeria"
     # establishing the database connection
     db_conn = connect_to_db()
