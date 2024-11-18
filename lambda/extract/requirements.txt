@@ -8,3 +8,4 @@ pandas
 pyarrow
 black
 flake8
+freezegun==0.3.4

@@ -11,6 +11,7 @@ from src.upload_data_s3 import (
 from moto import mock_aws
 import boto3
 from datetime import datetime
+from freezegun import freeze_time
 
 # TEST parameters
 BUCKET_NAME = "test_bucket"
@@ -41,12 +42,13 @@ def test_upload_to_s3_success(setup_s3_bucket):
     assert response["Body"].read().decode("utf-8") == DATA
 
 
+@freeze_time("2012-01-14")
 def test_upload_to_s3_success_with_correct_folder_structure(setup_s3_bucket):
     s3_key = upload_raw_data_to_s3(BUCKET_NAME, DATA, TABLE_NAME)
 
     # expected folder structure has been created successfully.
-    assert s3_key.startswith(f"{TABLE_NAME}/")
-    assert s3_key.endswith(".json")
+    expected_key = "sample_table/2012/01/sample_table_201201140000000000.json"
+    assert s3_key == expected_key
 
 
 @patch("src.upload_data_s3.boto3.client")

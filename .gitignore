@@ -189,3 +189,6 @@ __pycache__/
 
 # Specifically include the entire Lambda layer directory for libraries
 !layers/pg8000-pandas-layer/
+
+# Ignore the compressed functions
+compressed_funcs/*
