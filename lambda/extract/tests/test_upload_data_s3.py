@@ -41,6 +41,7 @@ def test_upload_to_s3_success(setup_s3_bucket):
     response = setup_s3_bucket.get_object(Bucket=BUCKET_NAME, Key=s3_key)
     assert response["Body"].read().decode("utf-8") == DATA
 
+
 @freeze_time("2012-01-14")
 def test_upload_to_s3_success_with_correct_folder_structure(setup_s3_bucket):
     s3_key = upload_raw_data_to_s3(BUCKET_NAME, DATA, TABLE_NAME)
