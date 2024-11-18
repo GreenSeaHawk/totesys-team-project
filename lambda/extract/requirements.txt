@@ -9,3 +9,4 @@ pyarrow
 black
 flake8
 moto
+freezegun==0.3.4

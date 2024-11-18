@@ -16,7 +16,10 @@ def upload_raw_data_to_s3(bucket_name, data, table_name):
     """Upload serialised data to S3 with a unique file name"""
     s3_client = boto3.client("s3")
     timestamp = get_timestamp()
-    s3_key = f"{table_name}/{table_name}_{timestamp}.json"
+    current_time = datetime.now()
+    year = current_time.strftime("%Y")
+    month = current_time.strftime("%m")
+    s3_key = f"{table_name}/{year}/{month}/{table_name}_{timestamp}.json"
     try:
         s3_client.put_object(
             Bucket=bucket_name,
