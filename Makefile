@@ -50,7 +50,7 @@ requirements-extract: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/extract/requirements.txt)
 requirements-transform: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/transform/requirements.txt)
-requirements-load: create-enviroment
+requirements-load: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
 
 ## remove the environment requirements
