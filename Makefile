@@ -50,7 +50,7 @@ requirements-extract: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/extract/requirements.txt)
 requirements-transform: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/transform/requirements.txt)
-requirements-load: load
+requirements-load: create-enviroment
 	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
 
 ## remove the environment requirements
@@ -60,7 +60,7 @@ uninstall-requirements-extract: create-environment
 	$(call execute_in_env, $(PIP) uninstall -r lambda/extract/requirements.txt)
 uninstall-requirements-transform: create-environment
 	$(call execute_in_env, $(PIP) uninstall -r lambda/transform/requirements.txt)
-uninstall requirements transform: load
+uninstall requirements transform: create-enviroment
 	$(call execute_in_env, $(PIP) uninstall -r lambda/load/requirements.txt)
 
 ################################################################################################################
