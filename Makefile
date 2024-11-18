@@ -54,7 +54,7 @@ requirements-load: create-enviroment
 	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
 
 ## remove the environment requirements
-uninstall-requirements: create-enviroment uninstall-requirements-extract uninstall-requirements-transform #uninstall requirements transform
+uninstall-requirements: create-enviroment uninstall-requirements-extract uninstall-requirements-transform uninstall requirements transform
 
 uninstall-requirements-extract: create-environment
 	$(call execute_in_env, $(PIP) uninstall -r lambda/extract/requirements.txt)
@@ -94,7 +94,7 @@ dev-setup: bandit safety black flake8 pytest
 # Build / Run
 
 ## Run the security test (bandit + safety)
-security-test: security-test-extract security-test-transform #security-test-load
+security-test: security-test-extract security-test-transform security-test-load
 security-test-extract:
 	$(call execute_in_env, safety check -r lambda/extract/requirements.txt --ignore=70612)
 	$(call execute_in_env, bandit -lll lambda/extract/*.py)
@@ -107,7 +107,7 @@ security-test-load:
 	
 
 ## Pep8 tests
-pep8-test: pep8-test-extract pep8-test-transform #pep8-test-load
+pep8-test: pep8-test-extract pep8-test-transform pep8-test-load
 pep8-test-extract:
 	$(call execute_in_env, flake8 lambda/extract/**/*.py)
 pep8-test-transform:
