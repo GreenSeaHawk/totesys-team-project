@@ -44,7 +44,7 @@ define execute_in_env
 endef
 
 ## Build the environment requirements
-requirements: create-enviroment requirements-extract requirements-transform #requirements-load
+requirements: create-enviroment requirements-extract requirements-transform requirements-load
 
 requirements-extract: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/extract/requirements.txt)
