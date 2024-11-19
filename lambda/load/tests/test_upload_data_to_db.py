@@ -1,49 +1,60 @@
-# import pytest, boto3, os ,io, pg8000, json
-# import pandas as pd
-# from moto import mock_aws
-# from src.dbconnection import get_db_credentials, connect_to_db
-# from unittest.mock import patch, MagicMock
+import pytest
+import pandas as pd
+from src.dbconnection import return_engine
+from src.upload_data_to_db import insert_data_to_postgres
+from unittest.mock import patch
 
+class TestInsertToPostgres:
+    @patch("upload_data_to_db.pd.DataFrame.to_sql")
+    def test_insert_data_passes_correct_args_to_to_sql(self, mock_to_sql):
+        credentials = {
+            "user": "test_user",
+            "password": "test_pass",
+            "host": "my_host",
+            "database": "my_database",
+            "port": 1000,
+        }
+        table_name = 'dummy_table'
+        df = pd.DataFrame()
+        engine = return_engine(credentials)
 
-# @pytest.fixture
-# def secrets_client():
-#     with mock_aws():
-#         yield boto3.client("secretsmanager", region_name="eu-west-2")
+        insert_data_to_postgres(df, table_name, engine)
 
-
-# @mock_aws
-# def test_get_db_credentials_success(secrets_client):
-#     secret_name = "test-connection"
-#     secret_value = {
-#         "cohort_id": 1,
-#         "user": "test_user",
-#         "password": "test_pass",
-#         "host": "my_host",
-#         "database": "my_database",
-#         "port": 1000,
-#     }
-#     secrets_client.create_secret(
-#         Name=secret_name, SecretString=json.dumps(secret_value)
-#     )
-
-# @pytest.fixture
-# def conn(test_get_db_credentials_success):
-#     return connect_to_db(secret_name="test-connection")
-
-
-
-        
-# @patch("src.dbconnection.connect_to_db")
-# def test_connect_to_db_success(mock_connect):
-#     mock_conn = MagicMock()
-#     mock_connect.return_value = mock_conn
-
-#     def run_side_effect(query, params):
-#         if query == "INSERT INTO TABLE_NAME" and params == {"id": 1}:
-#             return [{"id": 1, "name": "Alice"}]
-#         else:
-#             raise database error
-
-#     mock_conn.run.side_effect = run_side_effect
+        mock_to_sql.assert_called_once_with(table_name, engine, if_exists='append', index=False)
     
+    @patch("upload_data_to_db.pd.DataFrame.to_sql")
+    def test_insert_data_prints_correct_string(self, mock_to_sql, capsys):
+        credentials = {
+            "user": "test_user",
+            "password": "test_pass",
+            "host": "my_host",
+            "database": "my_database",
+            "port": 1000,
+        }
+        table_name = 'dummy_table'
+        df = pd.DataFrame()
+        engine = return_engine(credentials)
+
+        insert_data_to_postgres(df, table_name, engine)
+
+        capture = capsys.readouterr()
+
+        assert capture.out.strip() == f"Inserted 0 rows into {table_name}."
+
+    def test_invoking_function_with_no_patch_raises_error(self):
+        credentials = {
+            "user": "test_user",
+            "password": "test_pass",
+            "host": "my_host",
+            "database": "my_database",
+            "port": 1000,
+        }
+        table_name = 'dummy_table'
+        df = pd.DataFrame()
+        engine = return_engine(credentials)
+        
+        with pytest.raises(Exception):
+            insert_data_to_postgres(df, table_name, engine)
+
+
    

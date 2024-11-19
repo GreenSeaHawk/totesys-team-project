@@ -1,12 +1,4 @@
-def upload_dataframe_to_database(data, conn):
-    pass
-
-
-
-engine = create_engine(
-    f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}'
-)
-
+import pandas as pd
 
 def insert_data_to_postgres(df, table_name, engine):
     """Insert a DataFrame into a PostgreSQL table."""
