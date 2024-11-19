@@ -1,8 +1,26 @@
 import pytest
 import pandas as pd
+import boto3
 from src.dbconnection import return_engine
-from src.upload_data_to_db import insert_data_to_postgres
+from src.upload_data_to_db import insert_data_to_postgres, update_last_ran_s3
 from unittest.mock import patch
+from datetime import datetime
+from moto import mock_aws
+
+# Variables
+LAST_RAN_KEY = "load_last_ran.json"
+BUCKET_NAME = "test_bucket"
+
+@pytest.fixture
+def setup_s3_bucket():
+    """Mock the S3 bucket for testing with moto."""
+    with mock_aws():
+        s3 = boto3.client("s3")
+        s3.create_bucket(
+            Bucket=BUCKET_NAME,
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        yield s3
 
 class TestInsertToPostgres:
     @patch("upload_data_to_db.pd.DataFrame.to_sql")
@@ -57,4 +75,13 @@ class TestInsertToPostgres:
             insert_data_to_postgres(df, table_name, engine)
 
 
+class TestUpdateLastRan:
+    def test_update_last_ran_puts_current_time(self, setup_s3_bucket):
+
+        update_last_ran_s3(BUCKET_NAME, Key=LAST_RAN_KEY)
+
+        response = setup_s3_bucket.get_object(Bucket=BUCKET_NAME, Key=LAST_RAN_KEY)
+        stored_time = response["Body"].read().decode("utf-8")
+        current_time = datetime.fromisoformat(stored_time)
+        assert (datetime.now() - current_time).total_seconds() < 3
    

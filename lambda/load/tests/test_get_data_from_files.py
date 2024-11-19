@@ -164,5 +164,5 @@ class TestGetDataFromFiles:
     def test_returns_data_if_no_files(self, populated_transform_bucket):
         result = get_data_from_files("transform_bucket", [])
         assert result.equals(pd.DataFrame())
-    
+
 

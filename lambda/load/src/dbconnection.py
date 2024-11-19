@@ -32,21 +32,3 @@ def return_engine(db_credentials):
     return engine
 
 
-# def connect_to_db(secret_name="my-database-connection"):
-#     credentials = get_db_credentials(secret_name)
-#     try:
-#         conn = pg8000.connect(
-#             user=credentials["user"],
-#             password=credentials["password"],
-#             host=credentials["host"],
-#             database=credentials["database"],
-#             port=credentials["port"],
-#         )
-#         return conn
-#     except pg8000.DatabaseError as de:
-#         error_message = "Some database connectivity error occurred."
-#         raise DatabaseError(error_message) from de
-
-
-# def close_db_connection(conn):
-#     conn.close()
