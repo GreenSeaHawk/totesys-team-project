@@ -66,7 +66,7 @@ def create_transform_bucket(s3):
 
 @pytest.fixture
 def populated_ingestion_bucket(s3, create_ingestion_bucket):
-    file_key_1 = "payment_type/payment_type_202201010000000000.json"
+    file_key_1 = "payment_type/2022/01/payment_type_202201010000000000.json"
     file_content_1 = [
         {
             "payment_type_id": 1,
@@ -88,7 +88,7 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
         },
     ]
     json_content_1 = json.dumps(file_content_1)
-    file_key_2 = "payment_type/payment_type_202301010000000000.json"
+    file_key_2 = "payment_type/2023/01/payment_type_202301010000000000.json"
     file_content_2 = [
         {
             "payment_type_id": 4,
@@ -110,10 +110,10 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
         },
     ]
     json_content_2 = json.dumps(file_content_2)
-    file_key_3 = "address/address_195001010000000000.json"
-    file_key_4 = "address/address_196001010000000000.json"
-    file_key_5 = "address/address_208001010000000000.json"
-    file_key_6 = "address/address_209001010000000000.json"
+    file_key_3 = "address/1950/01/address_195001010000000000.json"
+    file_key_4 = "address/1960/01/address_196001010000000000.json"
+    file_key_5 = "address/2080/01/address_208001010000000000.json"
+    file_key_6 = "address/2090/01/address_209001010000000000.json"
     s3.put_object(
         Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1
     )
@@ -217,8 +217,8 @@ class TestListAllFileNames:
             prefix="payment_type"
         )
         expected = [
-            "payment_type/payment_type_202201010000000000.json",
-            "payment_type/payment_type_202301010000000000.json",
+            "payment_type/2022/01/payment_type_202201010000000000.json",
+            "payment_type/2023/01/payment_type_202301010000000000.json",
         ]
         assert f"Expected {expected} but got {result}"
         assert result == expected
@@ -231,7 +231,7 @@ class TestListAllFileNames:
             last_run_timestamp=202212011430000000,
             prefix="payment_type"
         )
-        expected = ["payment_type/payment_type_202301010000000000.json"]
+        expected = ["payment_type/2023/01/payment_type_202301010000000000.json"]
         assert result == expected
 
     def test_list_all_filnames_returns_all_filenames_after_2025(
@@ -254,8 +254,8 @@ class TestListAllFileNames:
             prefix="address"
         )
         expected = [
-            "address/address_208001010000000000.json",
-            "address/address_209001010000000000.json",
+            "address/2080/01/address_208001010000000000.json",
+            "address/2090/01/address_209001010000000000.json",
         ]
         assert result == expected
 
