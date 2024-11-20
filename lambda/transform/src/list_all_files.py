@@ -35,23 +35,11 @@ def generate_first_run_key(bucket_name):
         Bucket=bucket_name, Key="first_run.json", Body=current_time
     )
 
-# This function hard codes "transform_bucket" which doesn't exist
-# This needs to be renamed and the function retested.
-# This function refers to an object that doesn't exist, so need
-# to write functions that generate last_run.json and test them.
 
-def list_all_filenames_in_s3(Bucket, prefix="", Key="last_run.json"):
+def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
     """Find the names of all files in S3 bucket, which are newer than
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
-    try:
-        response = s3_client.get_object(Bucket="totesys-transformed-data-bucket", Key=Key)
-        last_run_timestamp = int(response["Body"].read().decode("utf-8"))
-    except ClientError as e:
-        raise Exception(
-            f"Error retrieving {last_run_timestamp}: "
-            f"{e.response['Error']['Message']}"
-        ) from e
 
     try:
         paginator = s3_client.get_paginator("list_objects_v2")
@@ -69,7 +57,7 @@ def list_all_filenames_in_s3(Bucket, prefix="", Key="last_run.json"):
         if "Contents" in page:
             for file in page["Contents"]:
                 all_files.append(file["Key"])
-                match = re.findall(r"\d+", file["Key"])
+                match = re.findall(r"\d{18}", file["Key"])
                 if match:
                     timestamp = int(match[0])
                     if timestamp > last_run_timestamp:

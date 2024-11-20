@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError
 def generate_timestamp():
     return datetime.now().strftime(
         "%Y%m%d%H%M%S%f"
-    )  # will have 6 decimal places
+    )[:-2]  # will have 6 decimal places
     # return datetime.now().strftime("%Y%m%d%H%M%S%f")[:-2] -
     #  can be used if we need to have 4 decimal
 

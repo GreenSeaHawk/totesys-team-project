@@ -55,15 +55,16 @@ def lambda_handler_2(event, context):
     try:
         source_bucket = 'totesys-data-bucket-cimmeria'
         transform_bucket = 'totesys-transformed-data-bucket'
-        last_run_key = 'last_run.json'
+        last_ran_key = 'last_ran.json'
         first_run_key = 'first_run.json'
 
         # Create json with a timestamp from before the project began, to get all
         # the files for certain data
+        generate_first_run_key(transform_bucket)
         
 
         # Get updated filenames for each table
-        file_names_counterparty = list_all_filenames_in_s3(source_bucket, "counterparty", last_run_key)
+        file_names_counterparty = list_all_filenames_in_s3(source_bucket, "counterparty", last_ran_key)
         file_names_address = list_all_filenames_in_s3(source_bucket, "address", first_run_key)
         # etc
         
