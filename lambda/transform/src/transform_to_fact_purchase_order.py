@@ -1,4 +1,5 @@
 import json
+import boto3
 
 '''Need data from purchase_order
 create a new serial --> purchase_record_id (int)
@@ -19,7 +20,7 @@ agreed_delivery_location_id (int) --> agreed_delivery_location_id (int)
 
 '''
 
-def transform_to_fact_purchase_order(purchase_order_data):
+def transform_to_fact_purchase_order(purchase_order_data, Bucket="totesys-data-bucket-cimmeria"):
     '''Raise error if data is empty'''
     if not purchase_order_data:
         raise Exception('Error, purchase_order_data is empty')
@@ -27,7 +28,17 @@ def transform_to_fact_purchase_order(purchase_order_data):
     '''Convert all the entries and use a count make the new
     purchase_record_id'''
     purchase_order_entries = []
-    count = 1
+
+    '''Check if there has already been an id saved
+    if not then start the count at 1'''
+    s3 = boto3.client('s3')
+    try:
+        response = s3.get_object(
+            Bucket=Bucket, 
+            Key='fact-purchase-order-highest-id.txt')
+        count = int(response['Body'].read().decode("utf-8"))
+    except:
+        count = 1
     
     for purchase_order in purchase_order_data:
         temp_dict = {
@@ -49,5 +60,12 @@ def transform_to_fact_purchase_order(purchase_order_data):
         }
         purchase_order_entries.append(temp_dict)
         count += 1
-
+    
+    '''Save the count as the highest id'''
+    count_string = str(count)
+    s3.put_object(
+        Bucket=Bucket, 
+        Key='fact-purchase-order-highest-id.txt',
+        Body=count_string)
+    
     return json.dumps(purchase_order_entries, separators=(',',':'))

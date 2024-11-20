@@ -1,5 +1,5 @@
 import json
-
+import boto3
 '''Need data from sales_order, 
 create a new serial --> sales_record_id (int)
 sales_order_id --> sales_order_id (int)
@@ -20,7 +20,7 @@ agreed_delivery_date (varchar in form yyyy-mm-dd)
 agreed_delivery_location_id (int) --> agreed_delivery_location_id (int)
 '''
 
-def transform_to_fact_sales_order(sales_order_data):
+def transform_to_fact_sales_order(sales_order_data, Bucket="totesys-data-bucket-cimmeria"):
     '''Raise error if data is empty'''
     if not sales_order_data:
         raise Exception('Error, sales_order_data is empty')
@@ -28,7 +28,17 @@ def transform_to_fact_sales_order(sales_order_data):
     '''Convert all the entries and use a count make the new
     sales_record_id'''
     fact_sales_entries = []
-    count = 1
+
+    '''Check if there has already been an id saved
+    if not then start the count at 1'''
+    s3 = boto3.client('s3')
+    try:
+        response = s3.get_object(
+            Bucket=Bucket, 
+            Key='fact-sales-order-highest-id.txt')
+        count = int(response['Body'].read().decode("utf-8"))
+    except:
+        count = 1
     
     for sales in sales_order_data:
         temp_dict = {
@@ -51,5 +61,12 @@ def transform_to_fact_sales_order(sales_order_data):
         fact_sales_entries.append(temp_dict)
         count += 1
 
+    '''Save the count as the highest id'''
+    count_string = str(count)
+    s3.put_object(
+        Bucket=Bucket, 
+        Key='fact-sales-order-highest-id.txt',
+        Body=count_string)
+    
     return json.dumps(fact_sales_entries, separators=(',',':'))
 

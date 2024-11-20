@@ -1,9 +1,9 @@
 import json
 import pytest
-from src.transform_to_fact_payment import transform_to_fact_payment
-from moto import mock_aws
 import boto3
 import os
+from src.transform_to_fact_payment import transform_to_fact_payment
+from moto import mock_aws
 
 @pytest.fixture(scope="function")
 def aws_credentials():
@@ -93,7 +93,40 @@ expected_output = [
   }
 ]
 
-def test_fact_payment_happy_case(create_data_bucket):
+expected_output_2 = [
+  {
+    "payment_record_id": 3,
+    "payment_id": 1,
+    "created_date": "2024-11-10",
+    "created_time": "08:00:00",
+    "last_updated_date": "2024-11-10",
+    "last_updated_time": "08:00:00",
+    "transaction_id": 101,
+    "counterparty_id": 1,
+    "payment_amount": 5000.75,
+    "currency_id": 1,
+    "payment_type_id": 1,
+    "paid": True,
+    "payment_date": "2024-11-10"
+  },
+  {
+    "payment_record_id": 4,
+    "payment_id": 2,
+    "created_date": "2024-11-15",
+    "created_time": "10:30:00",
+    "last_updated_date": "2024-11-15",
+    "last_updated_time": "10:30:00",
+    "transaction_id": 102,
+    "counterparty_id": 2,
+    "payment_amount": 25000.0,
+    "currency_id": 2,
+    "payment_type_id": 2,
+    "paid": False,
+    "payment_date": "2024-12-01"
+  }
+]
+
+def test_count_starts_at_1_if_no_object_in_s3(create_data_bucket):
   output = transform_to_fact_payment(payment_type_sample_data, "data_bucket")
   expected_json_output = json.dumps(expected_output, separators=(',',':'))
 
@@ -104,17 +137,28 @@ def test_returns_error_if_payment_data_is_empty(create_data_bucket):
     transform_to_fact_payment([])
 
 
-def test_count_starts_at_1_if_no_object_in_s3(s3):
-  transform_to_fact_payment(payment_type_sample_data)
+def test_count_starts_at_1_if_no_object_in_s3(create_data_bucket):
+  output = transform_to_fact_payment(payment_type_sample_data, "data_bucket")
+  expected_json_output = json.dumps(expected_output, separators=(',',':'))
+
+  assert output == expected_json_output
+
+def test_count_saves_to_s3_bucket(s3, create_data_bucket):
+  transform_to_fact_payment(payment_type_sample_data, "data_bucket")
+  response = s3.get_object(
+    Bucket="data_bucket", 
+    Key='fact-payment-highest-id.txt')
+  count = int(response['Body'].read().decode("utf-8"))
   
-# def test_count_saves_to_s3_bucket(s3, create_data_bucket):
-#   pass
+  assert count == 3
 
 
-# def test_count_is_extracted_from_s3_bucket(s3, create_data_bucket):
-#   pass
+def test_count_is_both_saved_and_extracted_from_s3_bucket(s3, create_data_bucket):
+  transform_to_fact_payment(payment_type_sample_data, "data_bucket")
+  output = transform_to_fact_payment(payment_type_sample_data, "data_bucket")
+  expected_json_output = json.dumps(expected_output_2, separators=(',',':'))
+  
+  assert output == expected_json_output
 
 
-# def test_count_is_both_saved_and_extracted_from_s3_bucket(s3, create_data_bucket):
-#   pass
 
