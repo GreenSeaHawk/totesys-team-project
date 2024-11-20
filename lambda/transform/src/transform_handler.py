@@ -15,8 +15,8 @@ import boto3
 import logging
 from botocore.exceptions import ClientError
 from src.get_data_from_files import get_data_from_files
-from src.add_to_s3_file import add_to_s3_file_parquet, add_to_s3_file_json
-from src.list_all_files import list_all_filenames_in_s3, update_last_ran_s3
+from src.add_to_s3_file import add_to_s3_file_parquet
+from src.list_all_files import list_all_filenames_in_s3, update_last_ran_s3, get_last_ran, generate_first_run_key
 from src.transform_to_dim_counterparty import transform_to_dim_counterparty
 
 # Set up logging
@@ -56,33 +56,27 @@ def lambda_handler_2(event, context):
         source_bucket = 'totesys-data-bucket-cimmeria'
         transform_bucket = 'totesys-transformed-data-bucket'
         last_run_key = 'last_run.json'
+        first_run_key = 'first_run.json'
 
-        # dictionary to hold any additional data
-        additional_data = {}
+        # Create json with a timestamp from before the project began, to get all
+        # the files for certain data
+        
 
-        for table in TABLES:
-            logger.info(f'Processing table: {table}')
-            file_names = list_all_filenames_in_s3(Bucket=source_bucket, prefix=table, Key=last_run_key)
+        # Get updated filenames for each table
+        file_names_counterparty = list_all_filenames_in_s3(source_bucket, "counterparty", last_run_key)
+        file_names_address = list_all_filenames_in_s3(source_bucket, "address", first_run_key)
+        # etc
+        
 
-            if not file_names:
-                logger.info(f'No files found for: {table}')
-                continue
+        # Get data for each table
+        counterparty_data = get_data_from_files(source_bucket, file_names_counterparty)
+        address_data = get_data_from_files(source_bucket, file_names_address)
 
-            raw_data = get_data_from_files(Bucket=source_bucket, list_of_files=file_names)
-
-            # save the address data for dependant transormations
-            if table == 'address':
-                additional_data['address'] = raw_data
-
-            # transform data
-            transformed_data = transform_data(data=raw_data, table_name=table, additional_data=additional_data)
-
-            # upload transformed data to s3
-            add_to_s3_file_parquet(
-                bucket=transform_bucket,
-                data=transformed_data,
-                table=table
-            )
+        # etc
+        
+        # Transform the data
+        transform_to_dim_counterparty(counterparty_data, address_data)
+        # etc
 
             logger.info(f'Successfully processed: {table}')
         # Step 5 - call the update_ran method to update last_ran.json file with the current timestamp
@@ -154,3 +148,4 @@ def lambda_handler(event, context):
             "statusCode":500,
             "body":f"An unexpected Error occured. {str(e)}"
         }
+

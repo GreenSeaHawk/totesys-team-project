@@ -1,29 +1,8 @@
 import boto3
 import re
+from datetime import datetime
 from botocore.exceptions import ClientError
 
-
-# OLD CODE = not using this function.
-def list_all_filenames_in_s3_old(Bucket, prefix=""):
-    """Find the names of all files in S3 bucket, which are newer than
-    than last_ran, in the specified directory"""
-    s3_client = boto3.client("s3")
-    response = s3_client.get_object(
-        Bucket="transform_bucket", Key="last_run.json"
-    )
-    last_run_timestamp = int(response["Body"].read().decode("utf-8"))
-
-    files = s3_client.list_objects_v2(Bucket=Bucket, Prefix=prefix)
-    file_names = []
-    try:
-        for file in files["Contents"]:
-            timestamp = int(re.findall(r"\d+", file["Key"])[0])
-            if timestamp > last_run_timestamp:
-                file_names.append(file["Key"])
-    except KeyError:
-        raise NameError(f"no files in s3://{Bucket}/{prefix}")
-
-    return file_names
 
 def update_last_ran_s3(bucket_name='totesys-transformed-data-bucket'):
     """after processing update the last_ran file
@@ -34,12 +13,39 @@ def update_last_ran_s3(bucket_name='totesys-transformed-data-bucket'):
         Bucket=bucket_name, Key="last_ran.json", Body=current_time
     )
 
+def get_last_ran(bucket_name):
+    """retrieves timestamp from the last_ran file in s3,
+    if the file doesn't exist it returns a default timestamp"""
+    s3_client = boto3.client("s3")
+    try:
+        response = s3_client.get_object(
+            Bucket=bucket_name, Key="last_ran.json"
+        )
+        last_ran = response["Body"].read().decode("utf-8")
+        return datetime.fromisoformat(last_ran)
+    except s3_client.exceptions.NoSuchKey:
+        return datetime(1900, 1, 1)
+    
+def generate_first_run_key(bucket_name):
+    '''Generates a timestamp from before the beginning of the project
+    that can be used when needing to fetch all the data'''
+    s3_client = boto3.client("s3")
+    current_time = datetime(1900, 1, 1).isoformat()
+    s3_client.put_object(
+        Bucket=bucket_name, Key="first_run.json", Body=current_time
+    )
+
+# This function hard codes "transform_bucket" which doesn't exist
+# This needs to be renamed and the function retested.
+# This function refers to an object that doesn't exist, so need
+# to write functions that generate last_run.json and test them.
+
 def list_all_filenames_in_s3(Bucket, prefix="", Key="last_run.json"):
     """Find the names of all files in S3 bucket, which are newer than
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
     try:
-        response = s3_client.get_object(Bucket="transform_bucket", Key=Key)
+        response = s3_client.get_object(Bucket="totesys-transformed-data-bucket", Key=Key)
         last_run_timestamp = int(response["Body"].read().decode("utf-8"))
     except ClientError as e:
         raise Exception(

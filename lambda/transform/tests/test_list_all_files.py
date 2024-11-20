@@ -1,12 +1,13 @@
 import boto3
-from moto import mock_aws
 import pytest
 import os
 import json
 import random
 import string
 import time
-from src.list_all_files import list_all_filenames_in_s3
+from moto import mock_aws
+from datetime import datetime
+from src.list_all_files import list_all_filenames_in_s3, get_last_ran, generate_first_run_key, update_last_ran_s3
 
 
 def generate_random_filename():
@@ -58,7 +59,7 @@ def create_ingestion_bucket(s3):
 @pytest.fixture
 def create_transform_bucket(s3):
     s3.create_bucket(
-        Bucket="transform_bucket",
+        Bucket="totesys-transformed-data-bucket",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
 
@@ -137,22 +138,32 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
 def transform_bucket_2022(s3, create_transform_bucket):
     file_key = "last_run.json"
     file_content = "20210101000000"
-    s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
+    s3.put_object(Bucket="totesys-transformed-data-bucket", Key=file_key, Body=file_content)
 
 
 @pytest.fixture
 def transform_bucket_2022_dec(s3, create_transform_bucket):
     file_key = "last_run.json"
     file_content = "20221201143000"
-    s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
+    s3.put_object(Bucket="totesys-transformed-data-bucket", Key=file_key, Body=file_content)
 
 
 @pytest.fixture
 def transform_bucket_2025(s3, create_transform_bucket):
     file_key = "last_run.json"
     file_content = "20251201143000"
-    s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
+    s3.put_object(Bucket="totesys-transformed-data-bucket", Key=file_key, Body=file_content)
 
+@pytest.fixture
+def setup_s3_bucket():
+    """Mock the S3 bucket for testing with moto."""
+    with mock_aws():
+        s3 = boto3.client("s3")
+        s3.create_bucket(
+            Bucket="totesys-transformed-data-bucket",
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        yield s3
 
 class TestMockFixtures:
     def test_s3_bucket_creation(self, s3):
@@ -182,7 +193,7 @@ class TestMockFixtures:
         )
 
     def test_populate_transform_bucket(self, s3, transform_bucket_2022):
-        response = s3.list_objects_v2(Bucket="transform_bucket")
+        response = s3.list_objects_v2(Bucket="totesys-transformed-data-bucket")
         assert len(response["Contents"]) == 1
 
 
@@ -259,7 +270,7 @@ class TestListAllFileNames:
         self, s3, create_ingestion_bucket, create_transform_bucket
     ):
         BUCKET_NAME = "ingestion_bucket"
-        TRANSFORM_BUCKET_NAME = "transform_bucket"
+        TRANSFORM_BUCKET_NAME = "totesys-transformed-data-bucket"
         LAST_RUN_KEY = "last_run.json"
 
         last_run_timestamp = 1400000000  # as an example
@@ -285,3 +296,29 @@ class TestListAllFileNames:
         print(f"Execution time: {end_time - start_time:.2f} seconds.")
 
         assert len(file_names) > 0
+
+class TestTimeKeyFunctions:
+    def test_get_last_ran_when_no_file(self, create_transform_bucket):
+        result = get_last_ran("totesys-transformed-data-bucket")
+
+        assert result == datetime(1900, 1, 1)
+
+    def test_update_last_ran_puts_current_time(self, s3, create_transform_bucket):
+        update_last_ran_s3("totesys-transformed-data-bucket")
+        response = s3.get_object(Bucket="totesys-transformed-data-bucket", Key="last_ran.json")
+        stored_time = response["Body"].read().decode("utf-8")
+        current_time = datetime.fromisoformat(stored_time)
+        assert (datetime.now() - current_time).total_seconds() < 3
+
+    def test_get_last_ran_gets_updated_timestamp(self, s3, create_transform_bucket):
+        update_last_ran_s3("totesys-transformed-data-bucket")
+        response = get_last_ran("totesys-transformed-data-bucket")
+
+        assert (datetime.now() - response).total_seconds() < 3
+
+    def test_generate_first_run_key(self, s3, create_transform_bucket):
+        generate_first_run_key("totesys-transformed-data-bucket")
+        response = s3.get_object(Bucket="totesys-transformed-data-bucket", Key="first_run.json")
+        time_extracted = response["Body"].read().decode("utf-8")
+        current_time = datetime.fromisoformat(time_extracted)
+        assert current_time == datetime(1900, 1, 1)
