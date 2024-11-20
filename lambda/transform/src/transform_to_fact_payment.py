@@ -1,5 +1,6 @@
 import json
 import boto3
+from src.convert_unix_to_readable import convert_unix_to_readable
 
 '''Need data from payment
 create a new serial --> payment_record_id (int)
@@ -41,10 +42,10 @@ def transform_to_fact_payment(payment_data, Bucket="totesys-data-bucket-cimmeria
         temp_dict = {
             "payment_record_id": count,
             "payment_id": payment["payment_id"],
-            "created_date": payment["created_at"][:10],
-            "created_time": payment["created_at"][11:19],
-            "last_updated_date": payment["last_updated"][:10],
-            "last_updated_time": payment["last_updated"][11:19],
+            "created_date": convert_unix_to_readable(payment["created_at"])[:10],
+            "created_time": convert_unix_to_readable(payment["created_at"])[11:19],
+            "last_updated_date": convert_unix_to_readable(payment["last_updated"])[:10],
+            "last_updated_time": convert_unix_to_readable(payment["last_updated"])[11:19],
             "transaction_id": payment["transaction_id"],
             "counterparty_id": payment["counterparty_id"],
             "payment_amount": payment["payment_amount"],

@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from src.convert_unix_to_readable import convert_unix_to_readable
 
 '''Need data from sales_order table
 When the sales_order table is converted to fact_sales_order the
@@ -31,8 +32,8 @@ def transform_to_dim_date(sales_order_data, payment_data):
     sales_order_data'''
     list_of_dates = []
     for sale in sales_order_data:
-        list_of_dates.append(sale["created_at"][:10])
-        list_of_dates.append(sale["last_updated"][:10])
+        list_of_dates.append(convert_unix_to_readable(sale["created_at"])[:10])
+        list_of_dates.append(convert_unix_to_readable(sale["last_updated"])[:10])
         list_of_dates.append(sale["agreed_delivery_date"])
         list_of_dates.append(sale["agreed_payment_date"])
     '''Add the dates from payment_data'''

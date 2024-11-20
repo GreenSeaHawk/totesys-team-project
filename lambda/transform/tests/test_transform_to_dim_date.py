@@ -21,8 +21,8 @@ sales_sample_data = [
     },
     {
         "sales_order_id": 2,
-        "created_at": "2024-01-13T12:05:00Z",
-        "last_updated": "2024-04-13T12:05:00Z",
+        "created_at": 1667485249962,
+        "last_updated": 1667485249962,
         "design_id": 102,
         "staff_id": 12,
         "counterparty_id": 2,
@@ -64,12 +64,12 @@ payment_sample_data = [
 
 expected_output = [
   {
-    "date_id": "2024-11-13",
+    "date_id": "2024-11-18",
     "year": 2024,
     "month": 11,
-    "day": 13,
-    "day_of_week": 3,
-    "day_name": "Wednesday",
+    "day": 18,
+    "day_of_week": 1,
+    "day_name": "Monday",
     "month_name": "November",
     "quarter": 4
   },
@@ -94,24 +94,14 @@ expected_output = [
     "quarter": 4
   },
   {
-    "date_id": "2024-01-13",
-    "year": 2024,
-    "month": 1,
-    "day": 13,
-    "day_of_week": 6,
-    "day_name": "Saturday",
-    "month_name": "January",
-    "quarter": 1
-  },
-  {
-    "date_id": "2024-04-13",
-    "year": 2024,
-    "month": 4,
-    "day": 13,
-    "day_of_week": 6,
-    "day_name": "Saturday",
-    "month_name": "April",
-    "quarter": 2
+    "date_id": "2022-11-03",
+    "year": 2022,
+    "month": 11,
+    "day": 3,
+    "day_of_week": 4,
+    "day_name": "Thursday",
+    "month_name": "November",
+    "quarter": 4
   },
   {
     "date_id": "2024-12-10",
@@ -155,6 +145,7 @@ expected_output = [
   }
 ]
 
+
 def test_dim_date_happy_case():
     output = transform_to_dim_date(sales_sample_data, payment_sample_data)
     expected_json_output = json.dumps(expected_output, separators=(',',':'))
@@ -169,15 +160,15 @@ def test_returns_error_if_date_data_in_wrong_format():
     bad_data_sales = [
     {
         "sales_order_id": 1,
-        "created_at": "202-11-13T12:00:00Z",
-        "last_updated": "2024-11-13T12:00:00Z",
+        "created_at": 1667485249962,
+        "last_updated": 1667485249962,
         "design_id": 101,
         "staff_id": 10,
         "counterparty_id": 1,
         "units_sold": 5000,
         "unit_price": 3.50,
         "currency_id": 1,
-        "agreed_delivery_date": "2024-12-01",
+        "agreed_delivery_date": "202-12-01",
         "agreed_payment_date": "2024-12-05",
         "agreed_delivery_location_id": 20
     }]

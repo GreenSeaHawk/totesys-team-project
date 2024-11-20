@@ -1,5 +1,7 @@
 import json
 import boto3
+from src.convert_unix_to_readable import convert_unix_to_readable
+
 
 '''Need data from purchase_order
 create a new serial --> purchase_record_id (int)
@@ -44,10 +46,10 @@ def transform_to_fact_purchase_order(purchase_order_data, Bucket="totesys-data-b
         temp_dict = {
             "purchase_record_id": count,
             "purchase_order_id": purchase_order["purchase_order_id"],
-            "created_date": purchase_order["created_at"][:10],
-            "created_time": purchase_order["created_at"][11:19],
-            "last_updated_date": purchase_order["last_updated"][:10],
-            "last_updated_time": purchase_order["last_updated"][11:19],
+            "created_date": convert_unix_to_readable(purchase_order["created_at"])[:10],
+            "created_time": convert_unix_to_readable(purchase_order["created_at"])[11:19],
+            "last_updated_date": convert_unix_to_readable(purchase_order["last_updated"])[:10],
+            "last_updated_time": convert_unix_to_readable(purchase_order["last_updated"])[11:19],
             "staff_id": purchase_order["staff_id"],
             "counterparty_id": purchase_order["counterparty_id"],
             "item_code": purchase_order["item_code"],
