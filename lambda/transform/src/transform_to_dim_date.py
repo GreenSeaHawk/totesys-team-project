@@ -20,16 +20,6 @@ agreed_payment_date (varchar in form yyyy-mm-dd)
 --> agreed_payment_date (date: yyyy-mm-dd)'''
 
 def transform_to_dim_date(sales_order_data, payment_data):
-    '''SEE BELOW COMMENT
-    Raise error if data is empty, I don't know if this
-    is super important in this case and we might want the
-    function to still run if one of these sets of data
-    is empty. Currently the function won't run if either
-    of the data sets is empty'''
-    # if not sales_order_data:
-    #     raise Exception('Error, sales_order_data is empty')
-    # if not payment_data:
-    #     raise Exception('Error, payment_data is empty')
     '''Have re-written to only raise an error if both of
     the datasets are empty'''
     if not sales_order_data and not payment_data:
@@ -37,7 +27,6 @@ def transform_to_dim_date(sales_order_data, payment_data):
             'Error, sales_order_data and payment_data are empty'
             )
 
-    
     '''Create list of dates from each of the 4 columns of
     sales_order_data'''
     list_of_dates = []

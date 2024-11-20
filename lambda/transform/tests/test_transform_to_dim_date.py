@@ -7,8 +7,8 @@ from src.transform_to_dim_date import transform_to_dim_date
 sales_sample_data = [
     {
         "sales_order_id": 1,
-        "created_at": "2024-11-13T12:00:00Z",
-        "last_updated": "2024-11-13T12:00:00Z",
+        "created_at": 1731947889824,
+        "last_updated": 1731947889824,
         "design_id": 101,
         "staff_id": 10,
         "counterparty_id": 1,
