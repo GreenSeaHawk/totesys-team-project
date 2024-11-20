@@ -25,6 +25,14 @@ def list_all_filenames_in_s3_old(Bucket, prefix=""):
 
     return file_names
 
+def update_last_ran_s3(bucket_name='totesys-transformed-data-bucket'):
+    """after processing update the last_ran file
+    in s3 with the current timestamp"""
+    s3_client = boto3.client("s3")
+    current_time = datetime.now().isoformat()
+    s3_client.put_object(
+        Bucket=bucket_name, Key="last_ran.json", Body=current_time
+    )
 
 def list_all_filenames_in_s3(Bucket, prefix="", Key="last_run.json"):
     """Find the names of all files in S3 bucket, which are newer than

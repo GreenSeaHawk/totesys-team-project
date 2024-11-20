@@ -92,3 +92,5 @@ def add_to_s3_file_parquet(bucket, data, table):
             f"{e.response['Error']['Message']}"
         )
         raise Exception(error_message) from e
+
+
