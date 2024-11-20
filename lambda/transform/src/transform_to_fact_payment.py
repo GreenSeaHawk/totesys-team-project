@@ -1,4 +1,5 @@
 import json
+import boto3
 
 '''Need data from payment
 create a new serial --> payment_record_id (int)
@@ -16,7 +17,7 @@ paid (bool) --> paid (bool)
 payment_date (varchar in form yyyy-mm-dd) --> payment_date (date: yyyy-mm-dd)
 '''
 
-def transform_to_fact_payment(payment_data):
+def transform_to_fact_payment(payment_data, Bucket="totesys-data-bucket-cimmeria"):
     '''Raise error if data is empty'''
     if not payment_data:
         raise Exception('Error, payment_data is empty')
@@ -24,8 +25,18 @@ def transform_to_fact_payment(payment_data):
     '''Convert all the entries and use a count make the new
     sales_record_id'''
     payment_entries = []
-    count = 1
-    
+
+    '''Check if there has already been an id saved
+    if not then start the count at 1'''
+    s3 = boto3.client('s3')
+    try:
+        response = s3.get_object(
+            Bucket=Bucket, 
+            Key='fact-payment-highest-id.txt')
+        count = int(response['Body'].read().decode("utf-8"))
+    except:
+        count = 1
+
     for payment in payment_data:
         temp_dict = {
             "payment_record_id": count,
@@ -44,5 +55,13 @@ def transform_to_fact_payment(payment_data):
         }
         payment_entries.append(temp_dict)
         count += 1
+
+    '''Save the count as the highest id'''
+    count_string = str(count)
+    s3.put_object(
+        Bucket=Bucket, 
+        Key='fact-payment-highest-id.txt',
+        Body=count_string)
+
 
     return json.dumps(payment_entries, separators=(',',':'))

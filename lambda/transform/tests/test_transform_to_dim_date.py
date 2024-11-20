@@ -160,11 +160,26 @@ def test_dim_date_happy_case():
     expected_json_output = json.dumps(expected_output, separators=(',',':'))
 
     assert output == expected_json_output
-''''''
-def test_returns_error_if_sales_order_data_is_empty():
-    with pytest.raises(Exception, match='Error, sales_order_data is empty'):
-        transform_to_dim_date([], payment_sample_data)
 
-def test_returns_error_if_payment_data_is_empty():
-    with pytest.raises(Exception, match='Error, payment_data is empty'):
-        transform_to_dim_date(sales_sample_data, [])
+def test_returns_error_if_all_data_empty():
+    with pytest.raises(Exception, match='Error, sales_order_data and payment_data are empty'):
+        transform_to_dim_date([], [])
+
+def test_returns_error_if_date_data_in_wrong_format():
+    bad_data_sales = [
+    {
+        "sales_order_id": 1,
+        "created_at": "202-11-13T12:00:00Z",
+        "last_updated": "2024-11-13T12:00:00Z",
+        "design_id": 101,
+        "staff_id": 10,
+        "counterparty_id": 1,
+        "units_sold": 5000,
+        "unit_price": 3.50,
+        "currency_id": 1,
+        "agreed_delivery_date": "2024-12-01",
+        "agreed_payment_date": "2024-12-05",
+        "agreed_delivery_location_id": 20
+    }]
+    with pytest.raises(ValueError):
+        transform_to_dim_date(bad_data_sales, [])

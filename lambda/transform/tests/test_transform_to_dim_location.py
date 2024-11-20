@@ -13,7 +13,7 @@ expected_output = [
         "address_line_1": "123 Elm Street",
         "address_line_2": "Suite 4B",
         "district": "Downtown",
-        "city": 1,
+        "city": "Metropolis",
         "postal_code": "12345",
         "country": "USA",
         "phone": "+1-555-1234"
@@ -23,7 +23,7 @@ expected_output = [
         "address_line_1": "456 Maple Avenue",
         "address_line_2": None,
         "district": "Uptown",
-        "city": 2,
+        "city": "Springfield",
         "postal_code": "67890",
         "country": "USA",
         "phone": "+1-555-5678"

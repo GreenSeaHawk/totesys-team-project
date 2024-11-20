@@ -50,3 +50,14 @@ def test_dim_currency_happy_case():
 def test_returns_error_if_counterparty_data_is_empty():
     with pytest.raises(Exception, match='Error, currency_data is empty'):
         transform_to_dim_currency([])
+
+def test_returns_error_if_currency_name_not_found():
+    bad_data = [
+    {
+        "currency_id": 1,
+        "currency_code": "kwehrkjasj",
+        "created_at": "2024-11-13T12:00:00Z",
+        "last_updated": "2024-11-13T12:00:00Z"
+    }]
+    with pytest.raises(Exception, match='currency_name not found'):
+        transform_to_dim_currency(bad_data)
