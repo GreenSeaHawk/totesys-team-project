@@ -18,7 +18,11 @@ def transform_to_dim_currency(currency_data):
     currency_df = pd.DataFrame(currency_data)
     '''Simple helper function to convert currency_code to currency_name'''
     def get_currency_name(currency_code):
-        return Currency(currency_code).currency_name
+        try:
+            c_name = Currency(currency_code).currency_name
+        except:
+            raise Exception('currency_name not found')
+        return c_name
     '''Add currency_name as a column'''    
     currency_df["currency_name"] = currency_df["currency_code"].apply(get_currency_name)
     '''Remove unnecessary columns'''

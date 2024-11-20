@@ -13,7 +13,7 @@ def transform_to_dim_location(address_data):
             "address_line_1": address["address_line_1"],
             "address_line_2": address["address_line_2"],
             "district": address["district"],
-            "city": address["address_id"],
+            "city": address["city"],
             "postal_code": address["postal_code"],
             "country": address["country"],
             "phone": address["phone"]
