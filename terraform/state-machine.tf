@@ -5,7 +5,7 @@ resource "aws_sfn_state_machine" "state_machine_etl" {
   definition = <<EOF
 {
   "Comment": "A description of my state machine",
-  "StartAt": "Lambda Invoke 1",
+  "StartAt": "extract_lambda_func",
   "States": {
     "Extract": {
       "Type": "Task",
@@ -123,10 +123,10 @@ data "aws_iam_policy_document" "lambda_statemachine_permissions" {
 
 resource "aws_iam_policy" "state_machine_policy" {
   name_prefix = "state-machine-policy"
-  policy = data.aws_iam_policy_document.lambda_statemachine_persmissions.json
+  policy = data.aws_iam_policy_document.lambda_statemachine_permissions.json
 }
 
-resource "aws_iam_role_policy_attachment" "attach-lambda-statemachine-persmissions" {
+resource "aws_iam_role_policy_attachment" "attach-lambda-statemachine-permissions" {
   role = aws_iam_role.state_machine_role.name
   policy_arn = aws_iam_policy.state_machine_policy.arn
 }
