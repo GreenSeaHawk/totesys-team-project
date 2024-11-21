@@ -12,10 +12,7 @@ def get_data_from_files(Bucket, list_of_files):
             file_data = json.loads(json_data)
             data += file_data
         if data == [{}]:
-            raise Exception('data is empty')
+            raise Exception("data is empty")
         return data
     except json.JSONDecodeError:
-        raise Exception('file format is not in json')
-        
-
-    
+        raise Exception("file format is not in json")

@@ -7,13 +7,16 @@ from botocore.exceptions import ClientError
 
 
 def generate_timestamp():
-    return datetime.now().strftime(
-        "%Y%m%d%H%M%S%f"
-    )[:-2]  # will have 6 decimal places
+    return datetime.now().strftime("%Y%m%d%H%M%S%f")[
+        :-2
+    ]  # will have 6 decimal places
     # return datetime.now().strftime("%Y%m%d%H%M%S%f")[:-2] -
     #  can be used if we need to have 4 decimal
 
-'''This exists for pagination'''
+
+"""This exists for pagination"""
+
+
 def list_all_objects_in_bucket(bucket_name):
     s3_client = boto3.client("s3")
     all_objects = []
@@ -36,6 +39,7 @@ def list_all_objects_in_bucket(bucket_name):
         else:
             break
     return all_objects
+
 
 def add_to_s3_file_parquet(bucket, data, table):
     s3_client = boto3.client("s3")
@@ -62,5 +66,3 @@ def add_to_s3_file_parquet(bucket, data, table):
             f"{e.response['Error']['Message']}"
         )
         raise Exception(error_message) from e
-
-

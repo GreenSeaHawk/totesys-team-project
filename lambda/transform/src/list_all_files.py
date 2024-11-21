@@ -4,7 +4,7 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 
 
-def update_last_ran_s3(bucket_name='totesys-transformed-data-bucket'):
+def update_last_ran_s3(bucket_name="totesys-transformed-data-bucket"):
     """after processing update the last_ran file
     in s3 with the current timestamp"""
     s3_client = boto3.client("s3")
@@ -12,6 +12,7 @@ def update_last_ran_s3(bucket_name='totesys-transformed-data-bucket'):
     s3_client.put_object(
         Bucket=bucket_name, Key="last_ran.json", Body=current_time
     )
+
 
 def get_last_ran(bucket_name):
     """retrieves timestamp from the last_ran file in s3,
@@ -25,15 +26,16 @@ def get_last_ran(bucket_name):
         return datetime.fromisoformat(last_ran)
     except s3_client.exceptions.NoSuchKey:
         return datetime(1900, 1, 1)
-    
-def generate_first_run_key(bucket_name):
-    '''Generates a timestamp from before the beginning of the project
-    that can be used when needing to fetch all the data'''
-    s3_client = boto3.client("s3")
-    current_time = datetime(1900, 1, 1).isoformat()
-    s3_client.put_object(
-        Bucket=bucket_name, Key="first_run.json", Body=current_time
-    )
+
+
+# def generate_first_run_key(bucket_name):
+#     '''Generates a timestamp from before the beginning of the project
+#     that can be used when needing to fetch all the data'''
+#     s3_client = boto3.client("s3")
+#     current_time = datetime(1900, 1, 1).isoformat()
+#     s3_client.put_object(
+#         Bucket=bucket_name, Key="first_run.json", Body=current_time
+#     )
 
 
 def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):

@@ -7,7 +7,12 @@ import string
 import time
 from moto import mock_aws
 from datetime import datetime
-from src.list_all_files import list_all_filenames_in_s3, get_last_ran, generate_first_run_key, update_last_ran_s3
+from src.list_all_files import (
+    list_all_filenames_in_s3,
+    get_last_ran,
+    generate_first_run_key,
+    update_last_ran_s3,
+)
 
 
 def generate_random_filename():
@@ -138,21 +143,34 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
 def transform_bucket_2022(s3, create_transform_bucket):
     file_key = "last_run.json"
     file_content = "202101010000000000"
-    s3.put_object(Bucket="totesys-transformed-data-bucket", Key=file_key, Body=file_content)
+    s3.put_object(
+        Bucket="totesys-transformed-data-bucket",
+        Key=file_key,
+        Body=file_content,
+    )
 
 
 @pytest.fixture
 def transform_bucket_2022_dec(s3, create_transform_bucket):
     file_key = "last_run.json"
     file_content = "202212011430000000"
-    s3.put_object(Bucket="totesys-transformed-data-bucket", Key=file_key, Body=file_content)
+    s3.put_object(
+        Bucket="totesys-transformed-data-bucket",
+        Key=file_key,
+        Body=file_content,
+    )
 
 
 @pytest.fixture
 def transform_bucket_2025(s3, create_transform_bucket):
     file_key = "last_run.json"
     file_content = "202512011430000000"
-    s3.put_object(Bucket="totesys-transformed-data-bucket", Key=file_key, Body=file_content)
+    s3.put_object(
+        Bucket="totesys-transformed-data-bucket",
+        Key=file_key,
+        Body=file_content,
+    )
+
 
 @pytest.fixture
 def setup_s3_bucket():
@@ -164,6 +182,7 @@ def setup_s3_bucket():
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         yield s3
+
 
 class TestMockFixtures:
     def test_s3_bucket_creation(self, s3):
@@ -198,13 +217,11 @@ class TestMockFixtures:
 
 
 class TestListAllFileNames:
-    def test_returns_a_list(
-        self, populated_ingestion_bucket
-    ):
+    def test_returns_a_list(self, populated_ingestion_bucket):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", 
-            last_run_timestamp=20210101000000, 
-            prefix="payment_type"
+            Bucket="ingestion_bucket",
+            last_run_timestamp=20210101000000,
+            prefix="payment_type",
         )
         assert isinstance(result, list)
 
@@ -212,9 +229,9 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", 
+            Bucket="ingestion_bucket",
             last_run_timestamp=202101010000000000,
-            prefix="payment_type"
+            prefix="payment_type",
         )
         expected = [
             "payment_type/2022/01/payment_type_202201010000000000.json",
@@ -227,20 +244,22 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", 
+            Bucket="ingestion_bucket",
             last_run_timestamp=202212011430000000,
-            prefix="payment_type"
+            prefix="payment_type",
         )
-        expected = ["payment_type/2023/01/payment_type_202301010000000000.json"]
+        expected = [
+            "payment_type/2023/01/payment_type_202301010000000000.json"
+        ]
         assert result == expected
 
     def test_list_all_filnames_returns_all_filenames_after_2025(
         self, populated_ingestion_bucket
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", 
+            Bucket="ingestion_bucket",
             last_run_timestamp=202512011430000000,
-            prefix="payment_type"
+            prefix="payment_type",
         )
         expected = []  # NO files in 'payment_type' after 2025.
         assert result == expected
@@ -249,9 +268,9 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", 
+            Bucket="ingestion_bucket",
             last_run_timestamp=202512011430000000,
-            prefix="address"
+            prefix="address",
         )
         expected = [
             "address/2080/01/address_208001010000000000.json",
@@ -264,21 +283,21 @@ class TestListAllFileNames:
     ):
 
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", 
+            Bucket="ingestion_bucket",
             last_run_timestamp=202512011430000000,
-            prefix="payment_type"
+            prefix="payment_type",
         )
         assert result == []  # No files newer than the last_run.json timestamp
 
-    def test_wrong_prefix(
-        self, populated_ingestion_bucket
-    ):
+    def test_wrong_prefix(self, populated_ingestion_bucket):
         with pytest.raises(
             NameError, match="No files found in s3://ingestion_bucket/hi"
         ):
-            list_all_filenames_in_s3(Bucket="ingestion_bucket", 
-                                     last_run_timestamp=202512011430000000,
-                                     prefix="hi")
+            list_all_filenames_in_s3(
+                Bucket="ingestion_bucket",
+                last_run_timestamp=202512011430000000,
+                prefix="hi",
+            )
 
     def test_list_all_filenames_in_s3_stress(
         self, s3, create_ingestion_bucket, create_transform_bucket
@@ -303,8 +322,9 @@ class TestListAllFileNames:
 
         # measure execution time of the function
         start_time = time.time()
-        file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME,
-                                              last_run_timestamp=150000000000000001)
+        file_names = list_all_filenames_in_s3(
+            Bucket=BUCKET_NAME, last_run_timestamp=150000000000000001
+        )
         end_time = time.time()
 
         print(f"Number of files returned: {len(file_names)}")
@@ -312,20 +332,27 @@ class TestListAllFileNames:
 
         assert len(file_names) > 0
 
+
 class TestTimeKeyFunctions:
     def test_get_last_ran_when_no_file(self, create_transform_bucket):
         result = get_last_ran("totesys-transformed-data-bucket")
 
         assert result == datetime(1900, 1, 1)
 
-    def test_update_last_ran_puts_current_time(self, s3, create_transform_bucket):
+    def test_update_last_ran_puts_current_time(
+        self, s3, create_transform_bucket
+    ):
         update_last_ran_s3("totesys-transformed-data-bucket")
-        response = s3.get_object(Bucket="totesys-transformed-data-bucket", Key="last_ran.json")
+        response = s3.get_object(
+            Bucket="totesys-transformed-data-bucket", Key="last_ran.json"
+        )
         stored_time = response["Body"].read().decode("utf-8")
         current_time = datetime.fromisoformat(stored_time)
         assert (datetime.now() - current_time).total_seconds() < 3
 
-    def test_get_last_ran_gets_updated_timestamp(self, s3, create_transform_bucket):
+    def test_get_last_ran_gets_updated_timestamp(
+        self, s3, create_transform_bucket
+    ):
         update_last_ran_s3("totesys-transformed-data-bucket")
         response = get_last_ran("totesys-transformed-data-bucket")
 
@@ -333,7 +360,9 @@ class TestTimeKeyFunctions:
 
     def test_generate_first_run_key(self, s3, create_transform_bucket):
         generate_first_run_key("totesys-transformed-data-bucket")
-        response = s3.get_object(Bucket="totesys-transformed-data-bucket", Key="first_run.json")
+        response = s3.get_object(
+            Bucket="totesys-transformed-data-bucket", Key="first_run.json"
+        )
         time_extracted = response["Body"].read().decode("utf-8")
         current_time = datetime.fromisoformat(time_extracted)
         assert current_time == datetime(1900, 1, 1)

@@ -218,26 +218,27 @@ class TestGetDataFromFiles:
         file_key = "payment_type/payment_type_20220101000000.txt"
         content = "random text"
         files = ["payment_type/payment_type_20220101000000.txt"]
-        s3.create_bucket(Bucket="ingestion_bucket",
-                         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"})
-        s3.put_object(
-            Bucket="ingestion_bucket", Key=file_key, Body=content
+        s3.create_bucket(
+            Bucket="ingestion_bucket",
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        with pytest.raises(Exception, match='file format is not in json'):
+        s3.put_object(Bucket="ingestion_bucket", Key=file_key, Body=content)
+        with pytest.raises(Exception, match="file format is not in json"):
             get_data_from_files("ingestion_bucket", files)
 
-    def test_empty_list_of_files_returns_empty_list(self, populated_ingestion_bucket):
+    def test_empty_list_of_files_returns_empty_list(
+        self, populated_ingestion_bucket
+    ):
         assert get_data_from_files("ingestion_bucket", []) == []
 
     def test_single_file_with_no_data(self, s3):
         file_key = "payment_type/payment_type_20220101000000.json"
         content = json.dumps([{}])
         files = ["payment_type/payment_type_20220101000000.json"]
-        s3.create_bucket(Bucket="ingestion_bucket",
-                         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"})
-        s3.put_object(
-            Bucket="ingestion_bucket", Key=file_key, Body=content
+        s3.create_bucket(
+            Bucket="ingestion_bucket",
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        with pytest.raises(Exception, match='data is empty'):
+        s3.put_object(Bucket="ingestion_bucket", Key=file_key, Body=content)
+        with pytest.raises(Exception, match="data is empty"):
             get_data_from_files("ingestion_bucket", files)
-        
