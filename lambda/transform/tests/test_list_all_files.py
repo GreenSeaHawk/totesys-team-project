@@ -10,7 +10,6 @@ from datetime import datetime
 from src.list_all_files import (
     list_all_filenames_in_s3,
     get_last_ran,
-    generate_first_run_key,
     update_last_ran_s3,
 )
 

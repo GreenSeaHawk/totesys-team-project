@@ -1,8 +1,8 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from src.transform_handler import transform_handler
-from moto import mock_aws
 from datetime import datetime
+
 
 # Tables
 TABLES = [
@@ -143,6 +143,7 @@ def test_transform_handler_works_when_all_utils_are_called(
     mock_list_all_filenames_in_s3, 
     mock_get_data_from_files
 ):
+    # Assign mock values
     mock_get_last_ran.return_value = 'test-last-timestamp'
 
     def side_effect_list_files(
@@ -177,11 +178,11 @@ def test_transform_handler_works_when_all_utils_are_called(
         'department filtered data',
         'address filtered data'
     ]
+    # Call function
+    result = transform_handler("event", "context")
 
-    transform_handler("event", "context")
 
-
-    # Assert
+    # Assert values called correctly
     mock_get_last_ran.assert_called_once_with("totesys-transformed-data-bucket")
     for table in TABLES:
         mock_list_all_filenames_in_s3.assert_any_call(
@@ -251,6 +252,10 @@ def test_transform_handler_works_when_all_utils_are_called(
    
     mock_update_last_ran_s3.assert_called_once_with(
         bucket_name=transform_bucket)
+    
+    assert result == {'statusCode': 200, 'body': 'Transformation went fine. Processed 158 files.'}
+
+
 
     
     

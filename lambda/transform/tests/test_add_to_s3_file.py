@@ -1,6 +1,6 @@
 from src.add_to_s3_file import (
-    add_to_s3_file_json,
     list_all_objects_in_bucket,
+    add_to_s3_file_json,
     add_to_s3_file_parquet,
 )
 import pytest
@@ -51,6 +51,7 @@ class TestAddTos3File:
         response = s3.list_objects_v2(
             Bucket="transform_bucket", Prefix="address"
         )
+
         assert len(response["Contents"]) == 1
 
     @freeze_time("2023-01-01")
@@ -61,7 +62,7 @@ class TestAddTos3File:
         )
         assert (
             response["Contents"][0]["Key"]
-            == "address/2023/01/address_20230101000000000000.parquet"
+            == 'address/2023/01/address_202301010000000000.parquet'
         )
 
     def test_multiple_files_added(self, s3, create_transform_bucket):
@@ -77,7 +78,7 @@ class TestAddTos3File:
         add_to_s3_file_parquet("transform_bucket", [{"key": 1}], "address")
         captured = capsys.readouterr()
         expected_output = (
-            "Object address/2023/01/address_20230101000000000000.parquet "
+            "Object address/2023/01/address_202301010000000000.parquet "
             "uploaded successfully to s3://transform_bucket."
         )
         assert captured.out.strip() == expected_output
