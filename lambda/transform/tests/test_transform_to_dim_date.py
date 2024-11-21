@@ -1,7 +1,6 @@
 import json
 import pytest
 from src.transform_to_dim_date import transform_to_dim_date
-
 """Set up sample data"""
 
 sales_sample_data = [
@@ -145,6 +144,68 @@ expected_output = [
     },
 ]
 
+expected_output_only_sales = [
+    {
+        "date_id": "2024-11-18",
+        "year": 2024,
+        "month": 11,
+        "day": 18,
+        "day_of_week": 1,
+        "day_name": "Monday",
+        "month_name": "November",
+        "quarter": 4
+    },
+    {
+        "date_id": "2024-12-01",
+        "year": 2024,
+        "month": 12,
+        "day": 1,
+        "day_of_week": 7,
+        "day_name": "Sunday",
+        "month_name": "December",
+        "quarter": 4
+    },
+    {
+        "date_id": "2024-12-05",
+        "year": 2024,
+        "month": 12,
+        "day": 5,
+        "day_of_week": 4,
+        "day_name": "Thursday",
+        "month_name": "December",
+        "quarter": 4
+    },
+    {
+        "date_id": "2022-11-03",
+        "year": 2022,
+        "month": 11,
+        "day": 3,
+        "day_of_week": 4,
+        "day_name": "Thursday",
+        "month_name": "November",
+        "quarter": 4
+    },
+    {
+        "date_id": "2024-12-10",
+        "year": 2024,
+        "month": 12,
+        "day": 10,
+        "day_of_week": 2,
+        "day_name": "Tuesday",
+        "month_name": "December",
+        "quarter": 4
+    },
+    {
+        "date_id": "2024-12-15",
+        "year": 2024,
+        "month": 12,
+        "day": 15,
+        "day_of_week": 7,
+        "day_name": "Sunday",
+        "month_name": "December",
+        "quarter": 4
+    }
+]
 
 def test_dim_date_happy_case():
     output = transform_to_dim_date(sales_sample_data, payment_sample_data)
@@ -158,6 +219,12 @@ def test_returns_error_if_all_data_empty():
         Exception, match="Error, sales_order_data and payment_data are empty"
     ):
         transform_to_dim_date([], [])
+
+def test_returns_data_if_one_data_set_empty():
+    output = transform_to_dim_date(sales_sample_data, [])
+    expected_json_output = json.dumps(expected_output_only_sales, separators=(",", ":"))
+
+    assert output == expected_json_output
 
 
 def test_returns_error_if_date_data_in_wrong_format():
