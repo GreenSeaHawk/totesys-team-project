@@ -358,11 +358,3 @@ class TestTimeKeyFunctions:
 
         assert (datetime.now() - response).total_seconds() < 3
 
-    def test_generate_first_run_key(self, s3, create_transform_bucket):
-        generate_first_run_key("totesys-transformed-data-bucket")
-        response = s3.get_object(
-            Bucket="totesys-transformed-data-bucket", Key="first_run.json"
-        )
-        time_extracted = response["Body"].read().decode("utf-8")
-        current_time = datetime.fromisoformat(time_extracted)
-        assert current_time == datetime(1900, 1, 1)

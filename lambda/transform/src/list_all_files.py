@@ -28,15 +28,6 @@ def get_last_ran(bucket_name):
         return datetime(1900, 1, 1)
 
 
-# def generate_first_run_key(bucket_name):
-#     '''Generates a timestamp from before the beginning of the project
-#     that can be used when needing to fetch all the data'''
-#     s3_client = boto3.client("s3")
-#     current_time = datetime(1900, 1, 1).isoformat()
-#     s3_client.put_object(
-#         Bucket=bucket_name, Key="first_run.json", Body=current_time
-#     )
-
 
 def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
     """Find the names of all files in S3 bucket, which are newer than
