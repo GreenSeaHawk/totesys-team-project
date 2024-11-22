@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from src.convert_unix_to_readable import convert_unix_to_readable
+from convert_unix_to_readable import convert_unix_to_readable
 
 """Need data from sales_order table
 When the sales_order table is converted to fact_sales_order the

@@ -1,6 +1,6 @@
 import json
 import boto3
-from src.convert_unix_to_readable import convert_unix_to_readable
+from convert_unix_to_readable import convert_unix_to_readable
 
 
 """Need data from purchase_order

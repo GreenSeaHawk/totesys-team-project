@@ -1,27 +1,27 @@
 import logging
 from datetime import datetime
 from botocore.exceptions import ClientError
-from src.get_data_from_files import get_data_from_files
-from src.list_all_files import (
+from get_data_from_files import get_data_from_files
+from list_all_files import (
     list_all_filenames_in_s3,
     update_last_ran_s3,
     get_last_ran,
 )
-from src.transform_to_dim_counterparty import transform_to_dim_counterparty
-from src.transform_to_dim_currency import transform_to_dim_currency
-from src.transform_to_dim_design import transform_to_dim_design
-from src.transform_to_dim_location import transform_to_dim_location
-from src.transform_to_dim_payment_type import transform_to_dim_payment_type
-from src.transform_to_dim_staff import transform_to_dim_staff
-from src.transform_to_dim_date import transform_to_dim_date
-from src.transform_to_dim_transaction import transform_to_dim_transaction
-from src.transform_to_fact_payment import transform_to_fact_payment
-from src.transform_to_fact_purchase_order import (
+from transform_to_dim_counterparty import transform_to_dim_counterparty
+from transform_to_dim_currency import transform_to_dim_currency
+from transform_to_dim_design import transform_to_dim_design
+from transform_to_dim_location import transform_to_dim_location
+from transform_to_dim_payment_type import transform_to_dim_payment_type
+from transform_to_dim_staff import transform_to_dim_staff
+from transform_to_dim_date import transform_to_dim_date
+from transform_to_dim_transaction import transform_to_dim_transaction
+from transform_to_fact_payment import transform_to_fact_payment
+from transform_to_fact_purchase_order import (
     transform_to_fact_purchase_order,
 )
-from src.transform_to_fact_sales_order import transform_to_fact_sales_order
-from src.remove_old_entries import filter_latest_data
-from src.write_transfomed_data_to_s3 import write_transformed_data_to_s3
+from transform_to_fact_sales_order import transform_to_fact_sales_order
+from remove_old_entries import filter_latest_data
+from write_transfomed_data_to_s3 import write_transformed_data_to_s3
 
 # Set up logging
 logger = logging.getLogger()

@@ -1,5 +1,5 @@
 import logging
-from src.add_to_s3_file import add_to_s3_file_parquet
+from add_to_s3_file import add_to_s3_file_parquet
 
 # Set up logging
 logger = logging.getLogger()
