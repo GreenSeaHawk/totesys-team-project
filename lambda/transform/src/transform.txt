@@ -48,7 +48,7 @@ last_run
         collect data from counterparty folder in ingestion zone
             filenames = list_all_filenames_in_s3(Bucket==IngestionBucket, prefix='counterparty/')
             counterparty_data = get_data_from_files(Bucket=IngestionBucket, filenames)
-        
+            transform_data = counterparty_transform(counterparty_data, address_data)
         counterparty_data is a list of dictionaries that look like this:
             {
                 counterparty_id:int
