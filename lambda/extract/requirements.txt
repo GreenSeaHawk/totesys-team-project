@@ -3,7 +3,7 @@ pytest
 boto3
 pytest-mock
 pytest-testdox
-moto[all]
+moto==5.0.2
 pandas
 pyarrow
 black
