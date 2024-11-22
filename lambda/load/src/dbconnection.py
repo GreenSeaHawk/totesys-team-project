@@ -4,7 +4,6 @@ from botocore.exceptions import ClientError
 import psycopg2
 import sqlalchemy
 
-
 def get_db_credentials(secret_name="my-database-connection"):
     """get the credentials from the secret manager"""
     my_client = boto3.client("secretsmanager", region_name="eu-west-2")
@@ -30,5 +29,3 @@ def return_engine(db_credentials):
     f'postgresql://{db_credentials["user"]}:{db_credentials["password"]}@{db_credentials["host"]}:{db_credentials["port"]}/{db_credentials["database"]}'
 )
     return engine
-
-
