@@ -1,6 +1,11 @@
 from src.get_data_from_files import get_data_from_files
 from moto import mock_aws
-import boto3, os, pytest, json
+import boto3
+import os
+import pytest
+import json
+import time
+import random
 
 
 @pytest.fixture(scope="function")
@@ -90,12 +95,31 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
     file_key_4 = "address/address_19600101000000.json"
     file_key_5 = "address/address_20800101000000.json"
     file_key_6 = "address/address_20900101000000.json"
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_4, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_5, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_6, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_1, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_2, Body=json_content_2)
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_4, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_5, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_6, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_1, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_2, Body=json_content_2
+    )
+
+
+def generate_mock_file_data(num_records):
+    """Generate mock JSON data with the specified number of records."""
+    return [
+        {"id": i, "value": random.randint(1, 1000)} for i in range(num_records)
+    ]
 
 
 class TestGetDataFromFiles:
@@ -106,12 +130,16 @@ class TestGetDataFromFiles:
         ]
         assert isinstance(get_data_from_files("ingestion_bucket", files), list)
 
-    def test_returns_data_from_specified_files(self, populated_ingestion_bucket):
+    def test_returns_data_from_specified_files(
+        self, populated_ingestion_bucket
+    ):
         files = [
             "payment_type/payment_type_20220101000000.json",
             "payment_type/payment_type_20230101000000.json",
         ]
-        result = get_data_from_files(Bucket="ingestion_bucket", list_of_files=files)
+        result = get_data_from_files(
+            Bucket="ingestion_bucket", list_of_files=files
+        )
         expected = [
             {
                 "payment_type_id": 1,
@@ -153,5 +181,35 @@ class TestGetDataFromFiles:
         assert result == expected
 
     def test_returns_data_if_no_files(self, populated_ingestion_bucket):
-        result = get_data_from_files(Bucket="ingestion_bucket", list_of_files=[])
+        result = get_data_from_files(
+            Bucket="ingestion_bucket", list_of_files=[]
+        )
         assert result == []
+
+    def test_get_data_from_files_stress(self, s3, create_ingestion_bucket):
+        NUM_FILES = 1000
+        RECORDS_PER_FILE = 100
+
+        list_of_files = []
+        for i in range(NUM_FILES):
+            file_name = f"file_{i}.json"
+            file_data = generate_mock_file_data(RECORDS_PER_FILE)
+            s3.put_object(
+                Bucket="ingestion_bucket",
+                Key=file_name,
+                Body=json.dumps(file_data),
+            )
+            list_of_files.append(file_name)
+
+        start_time = time.time()
+        data = get_data_from_files(
+            Bucket="ingestion_bucket", list_of_files=list_of_files
+        )
+        end_time = time.time()
+
+        print(f"Number of files processed: {len(list_of_files)}")
+        print(f"Number of records returned: = {len(data)}")
+        print(f"Execution time: {end_time - start_time:.2f} seconds")
+
+        assert len(data) == NUM_FILES * RECORDS_PER_FILE
+        assert all("id" in record and "value" in record for record in data)

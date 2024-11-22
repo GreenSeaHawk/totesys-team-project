@@ -1,53 +1,87 @@
 import pytest
-import os
-import io
-import boto3
 import pandas as pd
+import boto3
+from src.dbconnection import return_engine
+from src.upload_data_to_db import insert_data_to_postgres, update_last_ran_s3
+from unittest.mock import patch
+from datetime import datetime
 from moto import mock_aws
-from src.dbconnection import get_db_credentials, connect_to_db
 
-@pytest.fixture(scope="function")
-def aws_credentials():
-    """Mocked AWS Credentials for moto."""
-    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-    os.environ["AWS_SECURITY_TOKEN"] = "testing"
-    os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
+# Variables
+LAST_RAN_KEY = "load_last_ran.json"
+BUCKET_NAME = "test_bucket"
 
-
-@pytest.fixture(scope="function")
-def rds(aws_credentials):
-    """
-    Return a mocked RDS client
-    """
+@pytest.fixture
+def setup_s3_bucket():
+    """Mock the S3 bucket for testing with moto."""
     with mock_aws():
-        yield boto3.client("rds", region_name="eu-west-2")
+        s3 = boto3.client("s3")
+        s3.create_bucket(
+            Bucket=BUCKET_NAME,
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        yield s3
+
+class TestInsertToPostgres:
+    @patch("upload_data_to_db.pd.DataFrame.to_sql")
+    def test_insert_data_passes_correct_args_to_to_sql(self, mock_to_sql):
+        credentials = {
+            "user": "test_user",
+            "password": "test_pass",
+            "host": "my_host",
+            "database": "my_database",
+            "port": 1000,
+        }
+        table_name = 'dummy_table'
+        df = pd.DataFrame()
+        engine = return_engine(credentials)
+
+        insert_data_to_postgres(df, table_name, engine)
+
+        mock_to_sql.assert_called_once_with(table_name, engine, if_exists='append', index=False)
+    
+    @patch("upload_data_to_db.pd.DataFrame.to_sql")
+    def test_insert_data_prints_correct_string(self, mock_to_sql, capsys):
+        credentials = {
+            "user": "test_user",
+            "password": "test_pass",
+            "host": "my_host",
+            "database": "my_database",
+            "port": 1000,
+        }
+        table_name = 'dummy_table'
+        df = pd.DataFrame()
+        engine = return_engine(credentials)
+
+        insert_data_to_postgres(df, table_name, engine)
+
+        capture = capsys.readouterr()
+
+        assert capture.out.strip() == f"Inserted 0 rows into {table_name}."
+
+    def test_invoking_function_with_no_patch_raises_error(self):
+        credentials = {
+            "user": "test_user",
+            "password": "test_pass",
+            "host": "my_host",
+            "database": "my_database",
+            "port": 1000,
+        }
+        table_name = 'dummy_table'
+        df = pd.DataFrame()
+        engine = return_engine(credentials)
+        
+        with pytest.raises(Exception):
+            insert_data_to_postgres(df, table_name, engine)
 
 
-@pytest.fixture(scope="function")
-def mocked_aws(aws_credentials):
-    """
-    Mock all AWS interactions
-    Requires you to create your own boto3 clients
-    """
-    with mock_aws():
-        yield
+class TestUpdateLastRan:
+    def test_update_last_ran_puts_current_time(self, setup_s3_bucket):
 
-@pytest.fixture(scope="function")
-def create_rds(rds):
-    rds.create_db_instance(
-        DBName='test-database',
-        MasterUsername='username',
-        MasterUserPassword='password',
-        Engine='postgres',
-        DBInstanceIdentifier='test-database',
-        DBInstanceClass='db.m5d.large',
-        EngineVersion='16.3',
-        Port=5432
-    )
+        update_last_ran_s3(BUCKET_NAME, Key=LAST_RAN_KEY)
 
-# class TestMockFixtures:
-
-
-
+        response = setup_s3_bucket.get_object(Bucket=BUCKET_NAME, Key=LAST_RAN_KEY)
+        stored_time = response["Body"].read().decode("utf-8")
+        current_time = datetime.fromisoformat(stored_time)
+        assert (datetime.now() - current_time).total_seconds() < 3
+   

@@ -3,8 +3,19 @@ from moto import mock_aws
 import pytest
 import os
 import json
-from pprint import pprint
+import random
+import string
+import time
 from src.list_all_files import list_all_filenames_in_s3
+
+
+def generate_random_filename():
+    """Generate a random file with a timestamp"""
+    timestamp = random.randint(1500000001, 2000000000)
+    random_str = "".join(
+        random.choices(string.ascii_letters + string.digits, k=10)
+    )
+    return f"{random_str}_{timestamp}.json"
 
 
 @pytest.fixture(scope="function")
@@ -102,12 +113,24 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
     file_key_4 = "address/address_19600101000000.json"
     file_key_5 = "address/address_20800101000000.json"
     file_key_6 = "address/address_20900101000000.json"
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_4, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_5, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_6, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_1, Body=json_content_1)
-    s3.put_object(Bucket="ingestion_bucket", Key=file_key_2, Body=json_content_2)
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_4, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_5, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_6, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_1, Body=json_content_1
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=file_key_2, Body=json_content_2
+    )
 
 
 @pytest.fixture
@@ -164,7 +187,9 @@ class TestMockFixtures:
 
 
 class TestListAllFileNames:
-    def test_returns_a_list(self, populated_ingestion_bucket, transform_bucket_2022):
+    def test_returns_a_list(
+        self, populated_ingestion_bucket, transform_bucket_2022
+    ):
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket", prefix="payment_type"
         )
@@ -180,6 +205,7 @@ class TestListAllFileNames:
             "payment_type/payment_type_20220101000000.json",
             "payment_type/payment_type_20230101000000.json",
         ]
+        assert f"Expected {expected} but got {result}"
         assert result == expected
 
     def test_list_all_filnames_returns_all_filenames_after_2022_december(
@@ -197,19 +223,65 @@ class TestListAllFileNames:
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket", prefix="payment_type"
         )
-        expected = []
+        expected = []  # NO files in 'payment_type' after 2025.
         assert result == expected
 
     def test_list_all_filnames_returns_all_filenames_after_2025_address(
         self, populated_ingestion_bucket, transform_bucket_2025
     ):
-        result = list_all_filenames_in_s3(Bucket="ingestion_bucket", prefix="address")
+        result = list_all_filenames_in_s3(
+            Bucket="ingestion_bucket", prefix="address"
+        )
         expected = [
             "address/address_20800101000000.json",
             "address/address_20900101000000.json",
         ]
         assert result == expected
 
-    def test_wrong_prefix(self, populated_ingestion_bucket, transform_bucket_2025):
-        with pytest.raises(NameError, match="no files in s3://ingestion_bucket/hi"):
+    def test_list_all_file_names_no_matching_files(
+        self, populated_ingestion_bucket, transform_bucket_2025
+    ):
+
+        result = list_all_filenames_in_s3(
+            Bucket="ingestion_bucket", prefix="payment_type"
+        )
+        assert result == []  # No files newer than the last_run.json timestamp
+
+    def test_wrong_prefix(
+        self, populated_ingestion_bucket, transform_bucket_2025
+    ):
+        with pytest.raises(
+            NameError, match="No files found in s3://ingestion_bucket/hi"
+        ):
             list_all_filenames_in_s3(Bucket="ingestion_bucket", prefix="hi")
+
+    def test_list_all_filenames_in_s3_stress(
+        self, s3, create_ingestion_bucket, create_transform_bucket
+    ):
+        BUCKET_NAME = "ingestion_bucket"
+        TRANSFORM_BUCKET_NAME = "transform_bucket"
+        LAST_RUN_KEY = "last_run.json"
+
+        last_run_timestamp = 1400000000  # as an example
+        s3.put_object(  # example timestamp
+            Bucket=TRANSFORM_BUCKET_NAME,
+            Key=LAST_RUN_KEY,
+            Body=str(last_run_timestamp),
+        )
+
+        number_of_files = 30
+        for _ in range(number_of_files):
+            filename = generate_random_filename()
+            s3.put_object(
+                Bucket=BUCKET_NAME, Key=filename, Body="Test content"
+            )
+
+        # measure execution time of the function
+        start_time = time.time()
+        file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME)
+        end_time = time.time()
+
+        print(f"Number of files returned: {len(file_names)}")
+        print(f"Execution time: {end_time - start_time:.2f} seconds.")
+
+        assert len(file_names) > 0

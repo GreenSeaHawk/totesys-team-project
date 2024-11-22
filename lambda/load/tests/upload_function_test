@@ -1,0 +1,17 @@
+from src.dbconnection import return_engine
+from src.upload_data_to_db import insert_data_to_postgres
+from src.dbconnection import get_db_credentials
+import pandas as pd
+
+# test the upload function in a test RDS, TEST RDS is lcoated in the shared AWS account
+rds_credentials = get_db_credentials("test-rds-credentials")
+
+engine = return_engine(rds_credentials)
+table_name = "dim_currency"
+Dict_of_data = {"currency_id": [4,5,6], 
+             "currency_code":["GBP", "USD", "EUR"],
+             "currency_name": ["Great British Pounds", "United States Dollar", "Euros"]
+             }
+data = pd.DataFrame.from_dict(Dict_of_data)
+
+insert_data_to_postgres(data, table_name, engine)

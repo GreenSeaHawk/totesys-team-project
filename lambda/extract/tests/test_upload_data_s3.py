@@ -8,7 +8,7 @@ from src.upload_data_s3 import (
     update_last_ran_s3,
     get_timestamp,
 )
-from moto import mock_s3
+from moto import mock_aws
 import boto3
 from datetime import datetime
 from freezegun import freeze_time
@@ -23,7 +23,7 @@ LAST_RAN_KEY = "last_ran.json"
 @pytest.fixture
 def setup_s3_bucket():
     """Mock the S3 bucket for testing with moto."""
-    with mock_s3():
+    with mock_aws():
         s3 = boto3.client("s3")
         s3.create_bucket(
             Bucket=BUCKET_NAME,
