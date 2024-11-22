@@ -65,7 +65,8 @@ def list_all_objects_in_bucket(bucket_name):
 def add_to_s3_file_parquet(bucket, data, table):
     s3_client = boto3.client("s3")
     try:
-        df = pd.DataFrame(data)
+        json_data = json.loads(data)
+        df = pd.DataFrame(json_data)
 
         # write the DataFrame to a Parquet file in memory
         buffer = io.BytesIO()

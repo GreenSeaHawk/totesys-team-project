@@ -8,7 +8,7 @@ resource "aws_lambda_function" "transform_lambda_func" {
     runtime = "python3.13"
     timeout = 600
     source_code_hash = data.archive_file.archive_transform_lambda.output_base64sha256
-    layers = [aws_lambda_layer_version.transform_lambda_layer.arn]
+    layers = [aws_lambda_layer_version.transform_lambda_layer_1.arn, aws_lambda_layer_version.transform_lambda_layer_2.arn ]
 }
 
 # Zip transform lambda handler to local zip file
@@ -26,9 +26,14 @@ data "archive_file" "archive_transform_lambda" {
 # }
 
 # Attach zipped transform layer to transform lambda func
-resource "aws_lambda_layer_version" "transform_lambda_layer" {
-  filename   = "${path.module}/../layers/transform-dependencies.zip"
-  layer_name = "transform_lambda_layer"
+resource "aws_lambda_layer_version" "transform_lambda_layer_1" {
+  filename   = "${path.module}/../layers/transform_1.zip"
+  layer_name = "transform_lambda_layer_1"
+}
+
+resource "aws_lambda_layer_version" "transform_lambda_layer_2" {
+  filename   = "${path.module}/../layers/transform_2.zip"
+  layer_name = "transform_lambda_layer_2"
 }
 
 

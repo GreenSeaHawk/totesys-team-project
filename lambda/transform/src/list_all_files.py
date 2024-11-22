@@ -32,6 +32,9 @@ def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
     """Find the names of all files in S3 bucket, which are newer than
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
+    last_run =int(last_run_timestamp.strftime("%Y%m%d%H%M%S%f")[
+        :-2
+    ])
 
     try:
         paginator = s3_client.get_paginator("list_objects_v2")
@@ -52,7 +55,7 @@ def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
                 match = re.findall(r"\d{18}", file["Key"])
                 if match:
                     timestamp = int(match[0])
-                    if timestamp > last_run_timestamp:
+                    if timestamp > last_run:
                         file_names.append(file["Key"])
     # If no files exist under the prefix, raise a NameError
     if not all_files:
@@ -60,3 +63,4 @@ def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
 
     # Return the list of files matching the timestamp criteria
     return file_names
+

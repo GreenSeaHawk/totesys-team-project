@@ -157,7 +157,7 @@ def test_dim_counterparty_happy_case():
         counterparty_data_sample, address_data_sample
     )
     expected_json_output = json.dumps(expected_output, separators=(",", ":"))
-    print(output)
+    print(type(output))
     assert output == expected_json_output
 
 
