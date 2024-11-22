@@ -356,4 +356,3 @@ class TestTimeKeyFunctions:
         response = get_last_ran("totesys-transformed-data-bucket")
 
         assert (datetime.now() - response).total_seconds() < 3
-

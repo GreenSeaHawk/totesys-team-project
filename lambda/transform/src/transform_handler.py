@@ -5,7 +5,7 @@ from src.get_data_from_files import get_data_from_files
 from src.list_all_files import (
     list_all_filenames_in_s3,
     update_last_ran_s3,
-    get_last_ran
+    get_last_ran,
 )
 from src.transform_to_dim_counterparty import transform_to_dim_counterparty
 from src.transform_to_dim_currency import transform_to_dim_currency
@@ -42,6 +42,7 @@ TABLES = [
     "transaction",
 ]
 
+
 def transform_handler(event, context):
     """Lambda Handler for the TRANSFORM part of the pipeline"""
     # Step 1 - parameters for the lambda handler
@@ -63,37 +64,38 @@ def transform_handler(event, context):
         "payment",
         "purchase_order",
         "payment_type",
-        "transaction"
+        "transaction",
     ]
     # Latest files from each bucket
     table_data = {}
     for data_table_name in data_tables:
         list_of_new_files = list_all_filenames_in_s3(
-                Bucket=source_bucket,
-                last_run_timestamp=last_timestamp,
-                prefix=data_table_name
-            )
+            Bucket=source_bucket,
+            last_run_timestamp=last_timestamp,
+            prefix=data_table_name,
+        )
         if list_of_new_files:
             table_data[data_table_name] = get_data_from_files(
-                    Bucket=source_bucket, 
-                    list_of_files=list_of_new_files
-                )
+                Bucket=source_bucket, list_of_files=list_of_new_files
+            )
 
     # SPECIAL CASES WHERE WE NEED ALL THE LATEST DATA
     # all the department data only needed if staff data present
-    if 'staff' in table_data.keys():
+    if "staff" in table_data.keys():
         all_department_files = list_all_filenames_in_s3(
             Bucket=source_bucket,
             last_run_timestamp=first_timestamp,
-            prefix="department"
+            prefix="department",
         )
         all_department_data = get_data_from_files(
             Bucket=source_bucket, list_of_files=all_department_files
         )
-        filtered_department_data = filter_latest_data(data=all_department_data, key='department_id')
+        filtered_department_data = filter_latest_data(
+            data=all_department_data, key="department_id"
+        )
     # all the address data
     # only needed if there is counterparty data
-    if 'counterparty' in table_data.keys():
+    if "counterparty" in table_data.keys():
         all_address_files = list_all_filenames_in_s3(
             Bucket=source_bucket,
             last_run_timestamp=first_timestamp,
@@ -102,8 +104,9 @@ def transform_handler(event, context):
         all_address_data = get_data_from_files(
             Bucket=source_bucket, list_of_files=all_address_files
         )
-        filtered_address_data = filter_latest_data(data=all_address_data, key='address_id')
-
+        filtered_address_data = filter_latest_data(
+            data=all_address_data, key="address_id"
+        )
 
     # apply transformations
     for table_name in table_data.keys():
@@ -113,40 +116,42 @@ def transform_handler(event, context):
                 address_data=filtered_address_data,
             )
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_counterparty',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_counterparty",
+                transformed_data=transformed_data,
             )
 
         if table_name == "currency":
             transformed_data = transform_to_dim_currency(
                 currency_data=table_data["currency"]
-                )
+            )
 
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_currency',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_currency",
+                transformed_data=transformed_data,
             )
 
         if table_name == "design":
             transformed_data = transform_to_dim_design(
-                design_data=table_data["design"])
+                design_data=table_data["design"]
+            )
 
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_design',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_design",
+                transformed_data=transformed_data,
             )
 
         if table_name == "address":
             transformed_data = transform_to_dim_location(
-                address_data=table_data["address"])
+                address_data=table_data["address"]
+            )
 
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_location',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_location",
+                transformed_data=transformed_data,
             )
 
         if table_name == "payment_type":
@@ -155,42 +160,42 @@ def transform_handler(event, context):
             )
 
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_payment_type',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_payment_type",
+                transformed_data=transformed_data,
             )
 
         if table_name == "staff":
             transformed_data = transform_to_dim_staff(
-                staff_data=table_data["staff"], 
-                department_data=filtered_department_data
+                staff_data=table_data["staff"],
+                department_data=filtered_department_data,
             )
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_staff',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_staff",
+                transformed_data=transformed_data,
             )
-            
+
         if table_name == "transaction":
             transformed_data = transform_to_dim_transaction(
                 transaction_data=table_data["transaction"]
             )
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='dim_transaction',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="dim_transaction",
+                transformed_data=transformed_data,
             )
-                
 
         if table_name == "payment":
             payment_data = table_data["payment"]
             transformed_data = transform_to_fact_payment(
-                payment_data=table_data["payment"])
-            
+                payment_data=table_data["payment"]
+            )
+
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='fact_payment',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="fact_payment",
+                transformed_data=transformed_data,
             )
 
         if table_name == "purchase_order":
@@ -198,9 +203,9 @@ def transform_handler(event, context):
                 purchase_order_data=table_data["purchase_order"]
             )
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='fact_purchase_order',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="fact_purchase_order",
+                transformed_data=transformed_data,
             )
 
         if table_name == "sales_order":
@@ -209,29 +214,26 @@ def transform_handler(event, context):
                 sales_order_data=table_data["sales_order"]
             )
             write_transformed_data_to_s3(
-                    transform_bucket=transform_bucket,
-                    table_name='fact_sales_order',
-                    transformed_data=transformed_data
+                transform_bucket=transform_bucket,
+                table_name="fact_sales_order",
+                transformed_data=transformed_data,
             )
     # Run dim date with data if it exists
     if sales_order_data or payment_data:
         transformed_data = transform_to_dim_date(
-                sales_order_data=sales_order_data,
-                payment_data=payment_data
-            )
+            sales_order_data=sales_order_data, payment_data=payment_data
+        )
         write_transformed_data_to_s3(
-                transform_bucket=transform_bucket,
-                table_name='dim_date',
-                transformed_data=transformed_data
-            )
+            transform_bucket=transform_bucket,
+            table_name="dim_date",
+            transformed_data=transformed_data,
+        )
 
     # update last_ran.json with the current timestamp
     update_last_ran_s3(bucket_name=transform_bucket)
 
     # count the total number of files processed
-    total_files_processed = sum(
-        len(files) for files in table_data.values()
-    )
+    total_files_processed = sum(len(files) for files in table_data.values())
 
     return {
         "statusCode": 200,

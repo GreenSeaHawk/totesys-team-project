@@ -54,14 +54,14 @@ requirements-load: create-environment
 	$(call execute_in_env, $(PIP) install -r lambda/load/requirements.txt)
 
 ## remove the environment requirements
-uninstall-requirements: create-enviroment uninstall-requirements-extract uninstall-requirements-transform uninstall requirements transform
+uninstall-requirements:uninstall-requirements-extract uninstall-requirements-transform uninstall-requirements-load
 
 uninstall-requirements-extract: create-environment
-	$(call execute_in_env, $(PIP) uninstall -r lambda/extract/requirements.txt)
+	$(call execute_in_env, $(PIP) uninstall -r lambda/extract/requirements.txt -y)
 uninstall-requirements-transform: create-environment
-	$(call execute_in_env, $(PIP) uninstall -r lambda/transform/requirements.txt)
-uninstall requirements transform: create-enviroment
-	$(call execute_in_env, $(PIP) uninstall -r lambda/load/requirements.txt)
+	$(call execute_in_env, $(PIP) uninstall -r lambda/transform/requirements.txt -y)
+uninstall-requirements-load: create-environment
+	$(call execute_in_env, $(PIP) uninstall -r lambda/load/requirements.txt -y)
 
 ################################################################################################################
 # Set Up

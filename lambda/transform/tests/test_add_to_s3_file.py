@@ -62,7 +62,7 @@ class TestAddTos3File:
         )
         assert (
             response["Contents"][0]["Key"]
-            == 'address/2023/01/address_202301010000000000.parquet'
+            == "address/2023/01/address_202301010000000000.parquet"
         )
 
     def test_multiple_files_added(self, s3, create_transform_bucket):

@@ -18,6 +18,7 @@ pluggy==1.5.0
 pyarrow
 pycparser==2.22
 pytest==8.3.3
+pytest-mock==3.14.0
 pytest-testdox==3.1.0
 python-dateutil==2.9.0.post0
 PyYAML==6.0.2

@@ -1,6 +1,7 @@
 import json
 import pytest
 from src.transform_to_dim_date import transform_to_dim_date
+
 """Set up sample data"""
 
 sales_sample_data = [
@@ -153,7 +154,7 @@ expected_output_only_sales = [
         "day_of_week": 1,
         "day_name": "Monday",
         "month_name": "November",
-        "quarter": 4
+        "quarter": 4,
     },
     {
         "date_id": "2024-12-01",
@@ -163,7 +164,7 @@ expected_output_only_sales = [
         "day_of_week": 7,
         "day_name": "Sunday",
         "month_name": "December",
-        "quarter": 4
+        "quarter": 4,
     },
     {
         "date_id": "2024-12-05",
@@ -173,7 +174,7 @@ expected_output_only_sales = [
         "day_of_week": 4,
         "day_name": "Thursday",
         "month_name": "December",
-        "quarter": 4
+        "quarter": 4,
     },
     {
         "date_id": "2022-11-03",
@@ -183,7 +184,7 @@ expected_output_only_sales = [
         "day_of_week": 4,
         "day_name": "Thursday",
         "month_name": "November",
-        "quarter": 4
+        "quarter": 4,
     },
     {
         "date_id": "2024-12-10",
@@ -193,7 +194,7 @@ expected_output_only_sales = [
         "day_of_week": 2,
         "day_name": "Tuesday",
         "month_name": "December",
-        "quarter": 4
+        "quarter": 4,
     },
     {
         "date_id": "2024-12-15",
@@ -203,9 +204,10 @@ expected_output_only_sales = [
         "day_of_week": 7,
         "day_name": "Sunday",
         "month_name": "December",
-        "quarter": 4
-    }
+        "quarter": 4,
+    },
 ]
+
 
 def test_dim_date_happy_case():
     output = transform_to_dim_date(sales_sample_data, payment_sample_data)
@@ -220,9 +222,12 @@ def test_returns_error_if_all_data_empty():
     ):
         transform_to_dim_date([], [])
 
+
 def test_returns_data_if_one_data_set_empty():
     output = transform_to_dim_date(sales_sample_data, [])
-    expected_json_output = json.dumps(expected_output_only_sales, separators=(",", ":"))
+    expected_json_output = json.dumps(
+        expected_output_only_sales, separators=(",", ":")
+    )
 
     assert output == expected_json_output
 
