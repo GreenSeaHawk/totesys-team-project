@@ -1,8 +1,8 @@
-# # Create the data bucket for the processed data to be put into
-# resource "aws_s3_bucket" "totesys_transformed_data_bucket" {
-#   bucket = "totesys-transformed-data-bucket"
-#   force_destroy = true
-# }
+# Create the data bucket for the processed data to be put into
+resource "aws_s3_bucket" "totesys_transformed_data_bucket" {
+  bucket = "totesys-transformed-data-bucket"
+  force_destroy = true
+}
 
 # # Create the folders for each table to be put into
 # # This might not be necessary as when you save to a bucket
