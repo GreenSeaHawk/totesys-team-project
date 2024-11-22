@@ -13,9 +13,9 @@ jmespath==1.0.1
 MarkupSafe==3.0.2
 moto==5.0.2
 packaging==24.2
-pandas
+pandas==2.2.3
 pluggy==1.5.0
-pyarrow
+pyarrow==18.0.0
 pycparser==2.22
 pytest==8.3.3
 pytest-mock==3.14.0

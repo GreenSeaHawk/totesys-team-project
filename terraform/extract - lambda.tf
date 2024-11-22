@@ -2,7 +2,7 @@
 
 resource "aws_lambda_function" "extract_lambda_func" {
     function_name = "extract_lambda_func"
-    filename = "${path.module}/../compress_funcs/extract_lambda.zip"
+    filename = "${path.module}/../compressed_funcs/extract_lambda.zip"
     role = aws_iam_role.extract_lambda_role.arn
     handler = "handler.lambda_handler" # this might not be the correct path
     runtime = "python3.13"
@@ -15,7 +15,7 @@ resource "aws_lambda_function" "extract_lambda_func" {
 data "archive_file" "archive_extract_lambda" {
   type        = "zip"
   source_dir = "${path.module}/../lambda/extract/src"
-  output_path = "${path.module}/../compress_funcs/extract_lambda.zip"
+  output_path = "${path.module}/../compressed_funcs/extract_lambda.zip"
 }
 
 # ZIPPED MANUALLY

@@ -191,4 +191,4 @@ __pycache__/
 !layers/pg8000-pandas-layer/
 
 # Ignore the compressed functions
-compressed_funcs/*
+compressed_funcs/*.zip
