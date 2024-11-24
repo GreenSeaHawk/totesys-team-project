@@ -1,4 +1,30 @@
 # # CHANGE FILE PATH NAMES WHEN KNOWN
+resource "aws_lambda_function" "transform_lambda_func" {
+    function_name = "transform_lambda_func"
+    role = aws_iam_role.transform_lambda_role.arn
+    image_uri     = "${aws_ecr_repository.transform_lambda_repo.repository_url}@${data.aws_ecr_image.transform_image.image_digest}"
+    package_type = "Image"
+    timeout = 600
+    memory_size = 512
+}
+
+resource "aws_ecr_repository" "transform_lambda_repo" {
+  name = "transform_lambda_func"
+}
+
+data "aws_ecr_image" "transform_image" {
+  repository_name = aws_ecr_repository.transform_lambda_repo.name
+  image_tag       = "latest"
+}
+
+
+
+
+
+
+
+
+
 
 # resource "aws_lambda_function" "transform_lambda_func" {
 #     function_name = "transform_lambda_func"
@@ -18,9 +44,7 @@
 #   output_path = "${path.module}/../compressed_funcs/transform_lambda_func.zip"
 # }
 
-resource "aws_ecr_repository" "transform_lambda_repo" {
-  name = "transform_lambda_func"
-}
+
 
 # # Zip transform layer requirements to local file
 # data "archive_file" "transform_requirements_layer" {

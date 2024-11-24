@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "s3_document" {
                 "s3:PutObject"]
     #"${aws_s3_bucket.totesys_transformed_data_bucket.arn}/*"
     resources = [
-      "${aws_s3_bucket.totesys_data_bucket.arn}/*"]
+      "${aws_s3_bucket.totesys_data_bucket.arn}*"]
   }
 }
 

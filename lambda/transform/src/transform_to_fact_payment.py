@@ -22,6 +22,7 @@ payment_date (varchar in form yyyy-mm-dd) --> payment_date (date: yyyy-mm-dd)
 def transform_to_fact_payment(
     payment_data, Bucket="totesys-data-bucket-cimmeria"
 ):
+    print (payment_data)
     """Raise error if data is empty"""
     if not payment_data:
         raise Exception("Error, payment_data is empty")
