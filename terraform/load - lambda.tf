@@ -2,7 +2,7 @@
 
 # resource "aws_lambda_function" "load_lambda_func" {
 #     function_name = "load_lambda_func"
-#     filename = "${path.module}/../load_lambda_func.zip" #change depending on lambda load file
+#     filename = "${path.module}/../compressed_funcs/load_lambda_func.zip" #change depending on lambda load file
 #     role = aws_iam_role.load_lambda_role.arn
 #     handler = "handler.lambda_handler" # change depending on lambda load file
 #     runtime = "python3.13"
@@ -15,7 +15,7 @@
 # data "archive_file" "archive_load_lambda" {
 #   type        = "zip"
 #   source_dir = "${path.module}/../lambda/load/src"
-#   output_path = "${path.module}/../load_lambda_func.zip"
+#   output_path = "${path.module}/../compressed_funcs/load_lambda_func.zip"
 # }
 
 # # Zip load layer requirements to local file
@@ -50,3 +50,21 @@
 #   principal     = "s3.amazonaws.com"
 #   source_arn    = "arn:aws:s3:::${aws_s3_bucket.totesys_transformed_data_bucket.id}"
 # }
+
+resource "aws_ecr_repository" "load_lambda_repo" {
+  name = "load_lambda_func"
+}
+
+resource "aws_lambda_function" "load_lambda_func" {
+    function_name = "load_lambda_func"
+    role = aws_iam_role.load_lambda_role.arn
+    image_uri     = "039612847146.dkr.ecr.eu-west-2.amazonaws.com/load_lambda_func@sha256:0ec54fd93e3cfe2a56f7062843443363bea8c072913bb1914a7df4d0461f46ca"
+    package_type = "Image"
+    timeout = 600
+    memory_size = 512
+}
+
+data "aws_ecr_image" "load_image" {
+  repository_name = aws_ecr_repository.load_lambda_repo.name
+  image_tag       = "latest"
+}

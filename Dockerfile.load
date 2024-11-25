@@ -1,0 +1,4 @@
+FROM public.ecr.aws/lambda/python:3.13
+COPY lambda/load/src /var/task
+RUN pip install pandas pyarrow SQLAlchemy psycopg2-binary
+CMD ["load_handler.handler"]
