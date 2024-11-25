@@ -149,7 +149,7 @@ build:
 
 # Tag the Docker image
 tag:
-	docker tag $(ECR_REPO_NAME):latest $(IMAGE_URI)
+	docker tag $(IMAGE_URI) $(ECR_REPO_NAME):latest 
 
 # Login to Amazon ECR
 ecr-login:
