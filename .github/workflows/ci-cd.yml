@@ -97,6 +97,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: build image
         run: |
+          sudo usermod -aG docker $USER
           make push
           make deploy      
 

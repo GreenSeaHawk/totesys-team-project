@@ -59,7 +59,7 @@ def transform_to_fact_sales_order(
             "last_updated_time": convert_unix_to_readable(
                 sales["last_updated"]
             )[11:19],
-            "staff_sales_id": sales["staff_id"],
+            "sales_staff_id": sales["staff_id"],
             "counterparty_id": sales["counterparty_id"],
             "units_sold": sales["units_sold"],
             "unit_price": sales["unit_price"],
