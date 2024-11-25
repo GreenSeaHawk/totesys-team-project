@@ -145,19 +145,19 @@ run-checks-load:security-test-load unit-test-load pep8-test-load
 
 # Build the Docker image
 build:
-	sudo docker build -t $(ECR_REPO_NAME) .
+	docker build -t $(ECR_REPO_NAME) .
 
 # Tag the Docker image
 tag:
-	sudo docker tag $(ECR_REPO_NAME):latest $(IMAGE_URI)
+	docker tag $(ECR_REPO_NAME):latest $(IMAGE_URI)
 
 # Login to Amazon ECR
 ecr-login:
-	sudo aws ecr get-login-password --region $(REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
+	aws ecr get-login-password --region $(REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 
 # Push the Docker image to ECR
 push: build tag ecr-login
-	docker sudo push $(IMAGE_URI)
+	docker --config ${GITHUB_WORKSPACE}/${GITHUB_RUN_ID} push $(IMAGE_URI)
 
 # Deploy the Lambda function with the new image
 deploy:
