@@ -3,12 +3,13 @@ import re
 
 from botocore.exceptions import ClientError
 
+
 def list_all_filenames_in_s3(Bucket, prefix="", Key="last_run.json"):
     """Find the names of all files in S3 bucket, which are newer than
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
     try:
-        response = s3_client.get_object(Bucket='transform_bucket', Key=Key)
+        response = s3_client.get_object(Bucket="transform_bucket", Key=Key)
         last_run_timestamp = int(response["Body"].read().decode("utf-8"))
     except ClientError as e:
         raise Exception(
