@@ -153,11 +153,11 @@ tag:
 
 # Login to Amazon ECR
 ecr-login:
-	aws ecr get-login-password --region $(REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
+	sudo aws ecr get-login-password --region $(REGION) | sudo docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 
 # Push the Docker image to ECR
 push: build tag ecr-login
-	docker --config ${GITHUB_WORKSPACE}/${GITHUB_RUN_ID} push $(IMAGE_URI)
+	sudo docker push $(IMAGE_URI)
 
 # Deploy the Lambda function with the new image
 deploy:
@@ -169,4 +169,3 @@ debug:
 	@echo "PROFILE: $(PROFILE)"
 	@echo "IMAGE_URI: $(IMAGE_URI)"
 
-#aws ecr get-login-password --region $(REGION) $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
