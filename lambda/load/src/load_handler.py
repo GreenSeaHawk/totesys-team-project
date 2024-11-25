@@ -37,7 +37,7 @@ def handler(event, context):
     engine = return_engine(credentials)
 
     for table in list_of_tables:
-        files = list_all_filenames_in_s3(bucket, table, key)
+        files = list_all_filenames_in_s3(bucket, key, table)
         data = get_data_from_files(bucket, files)
         insert_data_to_postgres(data, table, engine)
 
