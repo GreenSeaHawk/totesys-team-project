@@ -17,7 +17,7 @@ PIP:=pip
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query "Account" --output text --profile $(PROFILE))
 ECR_REPO_NAME := transform_lambda_func
 IMAGE_TAG := latest
-IMAGE_URI := $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com/$(ECR_REPO_NAME):$(IMAGE_TAG)
+IMAGE_URI := 118780647275.dkr.ecr.$(REGION).amazonaws.com/$(ECR_REPO_NAME):$(IMAGE_TAG)
 
 
 
@@ -162,3 +162,9 @@ push: build tag ecr-login
 # Deploy the Lambda function with the new image
 deploy: push
 	aws lambda update-function-code --function-name $(ECR_REPO_NAME) --image-uri $(IMAGE_URI) --region $(REGION) --profile $(PROFILE)
+
+debug:
+	@echo "AWS_ACCOUNT_ID: $(AWS_ACCOUNT_ID)"
+	@echo "REGION: $(REGION)"
+	@echo "PROFILE: $(PROFILE)"
+	@echo "IMAGE_URI: $(IMAGE_URI)"
