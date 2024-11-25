@@ -153,7 +153,7 @@ tag:
 
 # Login to Amazon ECR
 ecr-login:
-	aws ecr get-login-password --region $(REGION) $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
+	aws ecr get-login-password --no-include-email --region $(REGION) $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 
 # Push the Docker image to ECR
 push: build tag ecr-login
