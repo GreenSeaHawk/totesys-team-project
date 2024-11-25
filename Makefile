@@ -140,7 +140,7 @@ unit-test-load:
 ## Run all checks
 run-checks: security-test unit-test pep8-test
 run-checks-extract:security-test-extract unit-test-extract pep8-test-extract
-run-checks-transform:security-test-transform unit-test-transform #pep8-test-transform
+run-checks-transform:security-test-transform unit-test-transform pep8-test-transform
 run-checks-load:security-test-load unit-test-load pep8-test-load
 
 # Build the Docker image
@@ -153,7 +153,7 @@ tag:
 
 # Login to Amazon ECR
 ecr-login:
-	aws ecr get-login-password --region $(REGION) $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
+	aws ecr get-login-password --region $(REGION) --profile $(PROFILE) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 
 # Push the Docker image to ECR
 push: build tag ecr-login
@@ -169,4 +169,4 @@ debug:
 	@echo "PROFILE: $(PROFILE)"
 	@echo "IMAGE_URI: $(IMAGE_URI)"
 
-# aws ecr get-login-password --region $(REGION) --profile $(PROFILE) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
+#aws ecr get-login-password --region $(REGION) $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
