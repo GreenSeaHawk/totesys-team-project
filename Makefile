@@ -157,7 +157,7 @@ ecr-login:
 
 # Push the Docker image to ECR
 push: build tag ecr-login
-	sudo usermod -aG docker $USER
+	sudo usermod -aG docker $(USER)
 	docker push $(IMAGE_URI)
 	
 
