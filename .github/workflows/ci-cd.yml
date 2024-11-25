@@ -17,22 +17,22 @@ jobs:
         with:
           python-version: '3.12'
 
-  # build-and-test-extract:
-  #   needs: setup-python  
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
+  build-and-test-extract:
+    needs: setup-python  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-  #     - name: Install dependencies extract
-  #       run: |
-  #         make create-environment
-  #         make requirements-extract
-  #         make dev-setup
+      - name: Install dependencies extract
+        run: |
+          make create-environment
+          make requirements-extract
+          make dev-setup
 
-  #     - name: Run Development Checks
-  #       run: |
-  #         make run-checks-extract
+      - name: Run Development Checks
+        run: |
+          make run-checks-extract
 
   build-and-test-transform:
     needs: setup-python  
