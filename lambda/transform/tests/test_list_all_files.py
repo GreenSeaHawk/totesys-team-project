@@ -219,9 +219,10 @@ class TestListAllFileNames:
     def test_returns_a_list(self, populated_ingestion_bucket):
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=20210101000000,
+            last_run_timestamp=datetime(1900, 1, 1),
             prefix="payment_type",
         )
+        
         assert isinstance(result, list)
 
     def test_list_all_filnames_returns_all_filenames(
@@ -229,7 +230,8 @@ class TestListAllFileNames:
     ):
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=202101010000000000,
+            last_run_timestamp=datetime(1900, 1, 1),
+            
             prefix="payment_type",
         )
         expected = [
@@ -242,9 +244,10 @@ class TestListAllFileNames:
     def test_list_all_filnames_returns_all_filenames_after_2022_december(
         self, populated_ingestion_bucket
     ):
+        last_ran_time = datetime(2022, 12, 30, 0, 0, 0)
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=202212011430000000,
+            last_run_timestamp=last_ran_time,
             prefix="payment_type",
         )
         expected = [
@@ -257,7 +260,7 @@ class TestListAllFileNames:
     ):
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=202512011430000000,
+            last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0) ,
             prefix="payment_type",
         )
         expected = []  # NO files in 'payment_type' after 2025.
@@ -268,7 +271,7 @@ class TestListAllFileNames:
     ):
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=202512011430000000,
+            last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0),
             prefix="address",
         )
         expected = [
@@ -283,7 +286,7 @@ class TestListAllFileNames:
 
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=202512011430000000,
+            last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0),
             prefix="payment_type",
         )
         assert result == []  # No files newer than the last_run.json timestamp
@@ -294,7 +297,7 @@ class TestListAllFileNames:
         ):
             list_all_filenames_in_s3(
                 Bucket="ingestion_bucket",
-                last_run_timestamp=202512011430000000,
+                last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0),
                 prefix="hi",
             )
 
@@ -305,7 +308,7 @@ class TestListAllFileNames:
         TRANSFORM_BUCKET_NAME = "totesys-transformed-data-bucket"
         LAST_RUN_KEY = "last_run.json"
 
-        last_run_timestamp = 140000000000000000  # as an example
+        last_run_timestamp = datetime(1400, 12, 30, 0, 0, 0)  # as an example
         s3.put_object(  # example timestamp
             Bucket=TRANSFORM_BUCKET_NAME,
             Key=LAST_RUN_KEY,
@@ -322,7 +325,7 @@ class TestListAllFileNames:
         # measure execution time of the function
         start_time = time.time()
         file_names = list_all_filenames_in_s3(
-            Bucket=BUCKET_NAME, last_run_timestamp=150000000000000001
+            Bucket=BUCKET_NAME, last_run_timestamp=datetime(1500, 12, 30, 0, 0, 0)
         )
         end_time = time.time()
 

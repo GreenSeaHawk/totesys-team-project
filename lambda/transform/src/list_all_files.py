@@ -3,7 +3,6 @@ import re
 from datetime import datetime
 from botocore.exceptions import ClientError
 
-
 def update_last_ran_s3(bucket_name="totesys-transformed-data-bucket"):
     """after processing update the last_ran file
     in s3 with the current timestamp"""
@@ -32,9 +31,15 @@ def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
     """Find the names of all files in S3 bucket, which are newer than
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
+    # Parse up to 4 places of microseconds
+    #last_run_datetime = datetime.strptime(last_run_timestamp[:-2], "%Y%m%d%H%M%S%f")
+    # Keep up to 4 microseconds
+    #last_run =int(last_run_datetime.strftime("%Y%m%d%H%M%S%f")[:20])
     last_run =int(last_run_timestamp.strftime("%Y%m%d%H%M%S%f")[
         :-2
     ])
+    
+    print("-------",type(last_run))
 
     try:
         paginator = s3_client.get_paginator("list_objects_v2")

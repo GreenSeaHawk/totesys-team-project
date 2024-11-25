@@ -47,7 +47,7 @@ def create_transform_bucket(s3):
 
 class TestAddTos3File:
     def test_one_file_added(self, s3, create_transform_bucket):
-        add_to_s3_file_parquet("transform_bucket", [{"key": 1}], "address")
+        add_to_s3_file_parquet("transform_bucket", '[{"key": 1}]', "address")
         response = s3.list_objects_v2(
             Bucket="transform_bucket", Prefix="address"
         )
@@ -56,7 +56,7 @@ class TestAddTos3File:
 
     @freeze_time("2023-01-01")
     def test_file_added_have_correct_names(self, s3, create_transform_bucket):
-        add_to_s3_file_parquet("transform_bucket", [{"key": 1}], "address")
+        add_to_s3_file_parquet("transform_bucket", '[{"key": 1}]', "address")
         response = s3.list_objects_v2(
             Bucket="transform_bucket", Prefix="address"
         )
@@ -66,8 +66,8 @@ class TestAddTos3File:
         )
 
     def test_multiple_files_added(self, s3, create_transform_bucket):
-        add_to_s3_file_parquet("transform_bucket", [{"key": 1}], "address")
-        add_to_s3_file_parquet("transform_bucket", [{"key": 2}], "address")
+        add_to_s3_file_parquet("transform_bucket", '[{"key": 1}]', "address")
+        add_to_s3_file_parquet("transform_bucket", '[{"key": 2}]', "address")
         response = s3.list_objects_v2(
             Bucket="transform_bucket", Prefix="address"
         )
@@ -75,7 +75,7 @@ class TestAddTos3File:
 
     @freeze_time("2023-01-01")
     def test_success_message(self, create_transform_bucket, capsys):
-        add_to_s3_file_parquet("transform_bucket", [{"key": 1}], "address")
+        add_to_s3_file_parquet("transform_bucket", '[{"key": 1}]', "address")
         captured = capsys.readouterr()
         expected_output = (
             "Object address/2023/01/address_202301010000000000.parquet "
@@ -125,6 +125,7 @@ def generate_large_dataset(num_rows, num_columns=5):
     data = {
         f"col_{i}": [j for j in range(num_rows)] for i in range(num_columns)
     }
+    
     return pd.DataFrame(data)
 
 
@@ -136,7 +137,7 @@ class TestParquetFileToS3:
     def test_add_to_s3_file_parquet_sucess(self, s3, create_transform_bucket):
         # Arrange
         TABLE_NAME = "test_table"
-        DATA = [{"id": 1, "name": "Charlie"}, {"id": 2, "name": "Robert"}]
+        DATA = '[{"id": 1, "name": "Charlie"}, {"id": 2, "name": "Robert"}]'
 
         # Act
         add_to_s3_file_parquet(
@@ -157,7 +158,7 @@ class TestParquetFileToS3:
         # Load the Parquet file into a DataFrame
         df = pd.read_parquet(io.BytesIO(file_content), engine="pyarrow")
         assert not df.empty
-        assert len(df) == len(DATA)
+        assert len(df) == 2
         assert list(df.columns) == ["id", "name"]
 
     def test_add_to_s3_file_parquet_empty_data(
@@ -165,7 +166,7 @@ class TestParquetFileToS3:
     ):
         # Arrange
         TABLE_NAME = "test_table"
-        DATA = []  # empty list
+        DATA = '[]'  # empty list
 
         # Act
         add_to_s3_file_parquet(
@@ -192,7 +193,7 @@ class TestParquetFileToS3:
     ):
         # Arrange
         TABLE_NAME = "test_table"
-        DATA = [{"id": 1, "name": "Charlie"}, {"id": 2, "name": "Robert"}]
+        DATA = '[{"id": 1, "name": "Charlie"}, {"id": 2, "name": "Robert"}]'
 
         # Mock boto's3 put_object to raise a clienterror
         mock_s3_client = mocker.patch("boto3.client")
@@ -220,12 +221,12 @@ class TestParquetFileToS3:
         # Generate a large dataset
         num_rows = 1_000_000
         data = generate_large_dataset(num_rows=num_rows)
-
+        
         # Act
         start_time = time.time()
         add_to_s3_file_parquet(
             bucket="transform_bucket",
-            data=data.to_dict(orient="records"),
+            data=data.to_json(orient="records"),
             table=TABLE_NAME,
         )
         end_time = time.time()
@@ -261,7 +262,7 @@ class TestParquetFileToS3:
             data = generate_large_dataset(NUM_ROWS_PER_FILE)
             add_to_s3_file_parquet(
                 bucket="transform_bucket",
-                data=data.to_dict(orient="records"),
+                data=data.to_json(orient="records"),
                 table=TABLE_NAME,
             )
         end_time = time.time()
