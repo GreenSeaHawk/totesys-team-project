@@ -17,12 +17,11 @@ payment_type_id (int) --> payment_type_id (int)
 paid (bool) --> paid (bool)
 payment_date (varchar in form yyyy-mm-dd) --> payment_date (date: yyyy-mm-dd)
 """
-
+from pprint import pprint
 
 def transform_to_fact_payment(
     payment_data, Bucket="totesys-data-bucket-cimmeria"
-):
-    print (payment_data)
+):  
     """Raise error if data is empty"""
     if not payment_data:
         raise Exception("Error, payment_data is empty")
