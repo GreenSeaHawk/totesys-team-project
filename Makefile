@@ -156,11 +156,11 @@ ecr-login:
 	aws ecr get-login-password --region $(REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 
 # Push the Docker image to ECR
-push: build tag ecr-login
+push:
 	docker push $(IMAGE_URI)
 
 # Deploy the Lambda function with the new image
-deploy: push
+deploy:
 	aws lambda update-function-code --function-name $(ECR_REPO_NAME) --image-uri $(IMAGE_URI) --region $(REGION) --profile $(PROFILE)
 
 debug:
