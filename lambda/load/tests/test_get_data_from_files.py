@@ -43,59 +43,46 @@ def create_transform_bucket(s3):
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
 
+
 @pytest.fixture
 def populated_transform_bucket(s3, create_transform_bucket):
     file_key_1 = "dim_payment/2022/01/dim_payment_20220101000000.parquet"
     file_content_1 = [
-  {
-    "payment_type_id": 4,
-    "payment_type_name": "SALES_RECEIPT"
-  },
-  {
-    "payment_type_id": 5,
-    "payment_type_name": "PURCHASE_PAYMENT"
-  },
-  {
-    "payment_type_id": 6,
-    "payment_type_name": "REFUND"
-  }
-]
+        {"payment_type_id": 4, "payment_type_name": "SALES_RECEIPT"},
+        {"payment_type_id": 5, "payment_type_name": "PURCHASE_PAYMENT"},
+        {"payment_type_id": 6, "payment_type_name": "REFUND"},
+    ]
     df = pd.DataFrame(file_content_1)
     # Write the DataFrame to an in-memory buffer
     buffer = io.BytesIO()
     df.to_parquet(buffer, engine="pyarrow")
     buffer.seek(0)  # Reset buffer position to the beginning
 
-    s3.put_object(Bucket="transform_bucket", Key=file_key_1, Body=buffer.getvalue())
+    s3.put_object(
+        Bucket="transform_bucket", Key=file_key_1, Body=buffer.getvalue()
+    )
 
     file_key_2 = "dim_payment/2023/01/dim_payment_20230101000000.parquet"
     file_content_2 = [
-  {
-    "payment_type_id": 1,
-    "payment_type_name": "SALES_RECEIPT"
-  },
-  {
-    "payment_type_id": 2,
-    "payment_type_name": "PURCHASE_PAYMENT"
-  },
-  {
-    "payment_type_id": 3,
-    "payment_type_name": "REFUND"
-  }
-]
+        {"payment_type_id": 1, "payment_type_name": "SALES_RECEIPT"},
+        {"payment_type_id": 2, "payment_type_name": "PURCHASE_PAYMENT"},
+        {"payment_type_id": 3, "payment_type_name": "REFUND"},
+    ]
     df2 = pd.DataFrame(file_content_2)
     # Write the DataFrame to an in-memory buffer
     buffer = io.BytesIO()
     df2.to_parquet(buffer, engine="pyarrow", index=False)
     buffer.seek(0)  # Reset buffer position to the beginning
 
-    s3.put_object(Bucket="transform_bucket", Key=file_key_2, Body=buffer.getvalue())
+    s3.put_object(
+        Bucket="transform_bucket", Key=file_key_2, Body=buffer.getvalue()
+    )
+
 
 class TestMockModules:
     def test_populate_transform_bucket(self, s3, populated_transform_bucket):
         response = s3.list_objects_v2(Bucket="transform_bucket")
         assert len(response["Contents"]) == 2
-
 
 
 class TestGetDataFromFiles:
@@ -109,54 +96,29 @@ class TestGetDataFromFiles:
         file = ["dim_payment/2023/01/dim_payment_20230101000000.parquet"]
         response = get_data_from_files("transform_bucket", file)
         file_content_2 = [
-  {
-    "payment_type_id": 1,
-    "payment_type_name": "SALES_RECEIPT"
-  },
-  {
-    "payment_type_id": 2,
-    "payment_type_name": "PURCHASE_PAYMENT"
-  },
-  {
-    "payment_type_id": 3,
-    "payment_type_name": "REFUND"
-  }
-]
+            {"payment_type_id": 1, "payment_type_name": "SALES_RECEIPT"},
+            {"payment_type_id": 2, "payment_type_name": "PURCHASE_PAYMENT"},
+            {"payment_type_id": 3, "payment_type_name": "REFUND"},
+        ]
         expected_output = pd.DataFrame(file_content_2)
 
         assert response.equals(expected_output)
-    
+
     def test_content_of_2_dataframes(self, populated_transform_bucket):
-        files = ["dim_payment/2023/01/dim_payment_20230101000000.parquet",
-                "dim_payment/2022/01/dim_payment_20220101000000.parquet"]
+        files = [
+            "dim_payment/2023/01/dim_payment_20230101000000.parquet",
+            "dim_payment/2022/01/dim_payment_20220101000000.parquet",
+        ]
         response = get_data_from_files("transform_bucket", files)
 
         file_content_2 = [
-  {
-    "payment_type_id": 1,
-    "payment_type_name": "SALES_RECEIPT"
-  },
-  {
-    "payment_type_id": 2,
-    "payment_type_name": "PURCHASE_PAYMENT"
-  },
-  {
-    "payment_type_id": 3,
-    "payment_type_name": "REFUND"
-  },
-    {
-    "payment_type_id": 4,
-    "payment_type_name": "SALES_RECEIPT"
-  },
-  {
-    "payment_type_id": 5,
-    "payment_type_name": "PURCHASE_PAYMENT"
-  },
-  {
-    "payment_type_id": 6,
-    "payment_type_name": "REFUND"
-  }
-]
+            {"payment_type_id": 1, "payment_type_name": "SALES_RECEIPT"},
+            {"payment_type_id": 2, "payment_type_name": "PURCHASE_PAYMENT"},
+            {"payment_type_id": 3, "payment_type_name": "REFUND"},
+            {"payment_type_id": 4, "payment_type_name": "SALES_RECEIPT"},
+            {"payment_type_id": 5, "payment_type_name": "PURCHASE_PAYMENT"},
+            {"payment_type_id": 6, "payment_type_name": "REFUND"},
+        ]
         expected_output = pd.DataFrame(file_content_2)
 
         assert response.equals(expected_output)
@@ -165,17 +127,24 @@ class TestGetDataFromFiles:
         result = get_data_from_files("transform_bucket", [])
         assert result.equals(pd.DataFrame())
 
-    def  test_prints_message_on_completion(self, capsys, populated_transform_bucket):
-        files = ["dim_payment/2023/01/dim_payment_20230101000000.parquet",
-                "dim_payment/2022/01/dim_payment_20220101000000.parquet"]
+    def test_prints_message_on_completion(
+        self, capsys, populated_transform_bucket
+    ):
+        files = [
+            "dim_payment/2023/01/dim_payment_20230101000000.parquet",
+            "dim_payment/2022/01/dim_payment_20220101000000.parquet",
+        ]
         response = get_data_from_files("transform_bucket", files)
         captured = capsys.readouterr()
-        assert captured.out.strip() == "Succesfully captured dim_payment data from 2 files"
+        assert (
+            captured.out.strip()
+            == "Succesfully captured dim_payment data from 2 files"
+        )
 
-    def  test_prints_message_on_completion_no_files(self, capsys, populated_transform_bucket):
+    def test_prints_message_on_completion_no_files(
+        self, capsys, populated_transform_bucket
+    ):
         files = []
         response = get_data_from_files("transform_bucket", files)
         captured = capsys.readouterr()
         assert captured.out.strip() == "No target files"
-        
-

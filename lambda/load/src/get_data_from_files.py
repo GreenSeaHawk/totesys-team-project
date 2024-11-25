@@ -3,6 +3,7 @@ import pandas as pd
 import io
 import re
 
+
 def get_data_from_files(bucket, files):
     s3 = boto3.client("s3")
 
@@ -13,11 +14,11 @@ def get_data_from_files(bucket, files):
         df2 = pd.read_parquet(buffer)
         df = pd.concat([df, df2], ignore_index=True)
     if files:
-        table_name = re.match(r'^[^/]+', files[0])[0]
-        print(f"Succesfully captured {table_name} data from {len(files)} files")
+        table_name = re.match(r"^[^/]+", files[0])[0]
+        print(
+            f"Succesfully captured {table_name} data from {len(files)} files"
+        )
     else:
         print(f"No target files")
-    
 
     return df
-

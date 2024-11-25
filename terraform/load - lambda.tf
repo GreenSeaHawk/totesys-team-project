@@ -1,4 +1,4 @@
-# CHANGE FILE PATH NAMES WHEN KNOWN
+# # CHANGE FILE PATH NAMES WHEN KNOWN
 
 # resource "aws_lambda_function" "load_lambda_func" {
 #     function_name = "load_lambda_func"
