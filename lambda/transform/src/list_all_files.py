@@ -4,6 +4,7 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 from pprint import pprint
 
+
 def update_last_ran_s3(bucket_name="totesys-transformed-data-bucket"):
     """after processing update the last_ran file
     in s3 with the current timestamp"""
@@ -32,12 +33,10 @@ def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
     """Find the names of all files in S3 bucket, which are newer than
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
-    last_run =int(last_run_timestamp.strftime("%Y%m%d%H%M%S%f")[
-        :-2
-    ])
+    last_run = int(last_run_timestamp.strftime("%Y%m%d%H%M%S%f")[:-2])
     try:
         paginator = s3_client.get_paginator("list_objects_v2")
-        page_iterator = paginator.paginate(Bucket=Bucket, Prefix=prefix+"/")
+        page_iterator = paginator.paginate(Bucket=Bucket, Prefix=prefix + "/")
     except ClientError as e:
         raise Exception(
             f"Error accessing S3 bucket '{Bucket}' with prefix '{prefix}':"
@@ -62,4 +61,3 @@ def list_all_filenames_in_s3(Bucket, last_run_timestamp, prefix=""):
 
     # Return the list of files matching the timestamp criteria
     return file_names
-

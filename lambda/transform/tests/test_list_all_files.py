@@ -222,7 +222,7 @@ class TestListAllFileNames:
             last_run_timestamp=datetime(1900, 1, 1),
             prefix="payment_type",
         )
-        
+
         assert isinstance(result, list)
 
     def test_list_all_filnames_returns_all_filenames(
@@ -231,7 +231,6 @@ class TestListAllFileNames:
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
             last_run_timestamp=datetime(1900, 1, 1),
-            
             prefix="payment_type",
         )
         expected = [
@@ -260,7 +259,7 @@ class TestListAllFileNames:
     ):
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
-            last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0) ,
+            last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0),
             prefix="payment_type",
         )
         expected = []  # NO files in 'payment_type' after 2025.
@@ -325,7 +324,8 @@ class TestListAllFileNames:
         # measure execution time of the function
         start_time = time.time()
         file_names = list_all_filenames_in_s3(
-            Bucket=BUCKET_NAME, last_run_timestamp=datetime(1500, 12, 30, 0, 0, 0)
+            Bucket=BUCKET_NAME,
+            last_run_timestamp=datetime(1500, 12, 30, 0, 0, 0),
         )
         end_time = time.time()
 

@@ -125,7 +125,7 @@ def generate_large_dataset(num_rows, num_columns=5):
     data = {
         f"col_{i}": [j for j in range(num_rows)] for i in range(num_columns)
     }
-    
+
     return pd.DataFrame(data)
 
 
@@ -166,7 +166,7 @@ class TestParquetFileToS3:
     ):
         # Arrange
         TABLE_NAME = "test_table"
-        DATA = '[]'  # empty list
+        DATA = "[]"  # empty list
 
         # Act
         add_to_s3_file_parquet(
@@ -221,7 +221,7 @@ class TestParquetFileToS3:
         # Generate a large dataset
         num_rows = 1_000_000
         data = generate_large_dataset(num_rows=num_rows)
-        
+
         # Act
         start_time = time.time()
         add_to_s3_file_parquet(
