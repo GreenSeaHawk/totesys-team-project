@@ -20,7 +20,7 @@ def generate_random_filename():
     random_str = "".join(
         random.choices(string.ascii_letters + string.digits, k=10)
     )
-    return f"{random_str}_{timestamp}.json"
+    return f"/{random_str}_{timestamp}.json"
 
 
 @pytest.fixture(scope="function")

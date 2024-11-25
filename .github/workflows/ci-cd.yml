@@ -68,8 +68,15 @@ jobs:
         run: |
           make run-checks-load
 
+  install-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that the image builds
+        run: docker build . --file Dockerfile
+
   deploy-docker-transform:
-    needs: build-and-test-transform
+    needs: [install-docker,build-and-test-transform]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
