@@ -1,22 +1,50 @@
 # # CHANGE FILE PATH NAMES WHEN KNOWN
-
 resource "aws_lambda_function" "transform_lambda_func" {
     function_name = "transform_lambda_func"
-    filename = "${path.module}/../compressed_funcs/transform_lambda_func.zip" #change depending on lambda transform file
     role = aws_iam_role.transform_lambda_role.arn
-    handler = "transform_handler.transform_handler" # change depending on lambda transform file
-    runtime = "python3.13"
+    image_uri     = "${aws_ecr_repository.transform_lambda_repo.repository_url}@${data.aws_ecr_image.transform_image.image_digest}"
+    package_type = "Image"
     timeout = 600
-    source_code_hash = data.archive_file.archive_transform_lambda.output_base64sha256
-    layers = [aws_lambda_layer_version.transform_lambda_layer_1.arn, aws_lambda_layer_version.transform_lambda_layer_2.arn ]
+    memory_size = 512
 }
 
-# Zip transform lambda handler to local zip file
-data "archive_file" "archive_transform_lambda" {
-  type        = "zip"
-  source_dir = "${path.module}/../lambda/transform/src"
-  output_path = "${path.module}/../compressed_funcs/transform_lambda_func.zip"
+resource "aws_ecr_repository" "transform_lambda_repo" {
+  name = "transform_lambda_func"
 }
+
+data "aws_ecr_image" "transform_image" {
+  repository_name = aws_ecr_repository.transform_lambda_repo.name
+  image_tag       = "latest"
+}
+
+
+
+
+
+
+
+
+
+
+# resource "aws_lambda_function" "transform_lambda_func" {
+#     function_name = "transform_lambda_func"
+#     filename = "${path.module}/../compressed_funcs/transform_lambda_func.zip" #change depending on lambda transform file
+#     role = aws_iam_role.transform_lambda_role.arn
+#     handler = "transform_handler.transform_handler" # change depending on lambda transform file
+#     runtime = "python3.13"
+#     timeout = 600
+#     source_code_hash = data.archive_file.archive_transform_lambda.output_base64sha256
+#     layers = [aws_lambda_layer_version.transform_lambda_layer_1.arn, aws_lambda_layer_version.transform_lambda_layer_2.arn ]
+# }
+
+# # Zip transform lambda handler to local zip file
+# data "archive_file" "archive_transform_lambda" {
+#   type        = "zip"
+#   source_dir = "${path.module}/../lambda/transform/src"
+#   output_path = "${path.module}/../compressed_funcs/transform_lambda_func.zip"
+# }
+
+
 
 # # Zip transform layer requirements to local file
 # data "archive_file" "transform_requirements_layer" {
@@ -25,16 +53,16 @@ data "archive_file" "archive_transform_lambda" {
 #     output_path = "${path.module}/../transform_lambda_layer.zip"
 # }
 
-# Attach zipped transform layer to transform lambda func
-resource "aws_lambda_layer_version" "transform_lambda_layer_1" {
-  filename   = "${path.module}/../layers/transform_1.zip"
-  layer_name = "transform_lambda_layer_1"
-}
+# # Attach zipped transform layer to transform lambda func
+# resource "aws_lambda_layer_version" "transform_lambda_layer_1" {
+#   filename   = "${path.module}/../layers/transform_1.zip"
+#   layer_name = "transform_lambda_layer_1"
+# }
 
-resource "aws_lambda_layer_version" "transform_lambda_layer_2" {
-  filename   = "${path.module}/../layers/transform_2.zip"
-  layer_name = "transform_lambda_layer_2"
-}
+# resource "aws_lambda_layer_version" "transform_lambda_layer_2" {
+#   filename   = "${path.module}/../layers/transform_2.zip"
+#   layer_name = "transform_lambda_layer_2"
+# }
 
 
 # # Trigger for transform if something added to raw data bucket

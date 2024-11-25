@@ -13,6 +13,11 @@ SHELL := /bin/bash
 PROFILE = default
 PIP:=pip
 
+# Additional variables for Docker and ECR
+AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query "Account" --output text --profile $(PROFILE))
+ECR_REPO_NAME := transform_lambda_func
+IMAGE_TAG := latest
+IMAGE_URI := $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com/$(ECR_REPO_NAME):$(IMAGE_TAG)
 
 
 
@@ -138,3 +143,22 @@ run-checks-extract:security-test-extract unit-test-extract pep8-test-extract
 run-checks-transform:security-test-transform unit-test-transform #pep8-test-transform
 run-checks-load:security-test-load unit-test-load pep8-test-load
 
+# Build the Docker image
+build:
+	docker build -t $(ECR_REPO_NAME) .
+
+# Tag the Docker image
+tag:
+	docker tag $(ECR_REPO_NAME):latest $(IMAGE_URI)
+
+# Login to Amazon ECR
+ecr-login:
+	aws ecr get-login-password --region $(REGION) --profile $(PROFILE) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
+
+# Push the Docker image to ECR
+push: build tag ecr-login
+	docker push $(IMAGE_URI)
+
+# Deploy the Lambda function with the new image
+deploy: push
+	aws lambda update-function-code --function-name $(ECR_REPO_NAME) --image-uri $(IMAGE_URI) --region $(REGION) --profile $(PROFILE)
