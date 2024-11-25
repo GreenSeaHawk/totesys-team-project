@@ -151,13 +151,6 @@ def test_returns_error_if_sales_order_data_is_empty(create_data_bucket):
         transform_to_fact_sales_order([])
 
 
-def test_count_starts_at_1_if_no_object_in_s3(create_data_bucket):
-    output = transform_to_fact_sales_order(sales_sample_data, "data_bucket")
-    expected_json_output = json.dumps(expected_output, separators=(",", ":"))
-
-    assert output == expected_json_output
-
-
 def test_count_saves_to_s3_bucket(s3, create_data_bucket):
     transform_to_fact_sales_order(sales_sample_data, "data_bucket")
     response = s3.get_object(

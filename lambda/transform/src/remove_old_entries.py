@@ -1,4 +1,8 @@
-# This function takes all the address (or department) data which is a list of dictionaries. Filter out the records for address/department, having the same address/department id, remove the old entries based on the last update.
+# This function takes all the address (or department)
+# data which is a list of dictionaries.
+# Filter out the records for address/department,
+# having the same address/department id,
+# remove the old entries based on the last update.
 
 
 def filter_latest_data(data, key):

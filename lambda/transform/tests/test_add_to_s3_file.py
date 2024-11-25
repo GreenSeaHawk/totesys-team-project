@@ -216,7 +216,6 @@ class TestParquetFileToS3:
     def test_add_to_s3_file_stress_large_dataset(
         self, mocker, s3, create_transform_bucket
     ):
-
         TABLE_NAME = "test_table"
         # Generate a large dataset
         num_rows = 1_000_000

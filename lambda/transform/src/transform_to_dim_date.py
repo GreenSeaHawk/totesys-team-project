@@ -4,7 +4,7 @@ from convert_unix_to_readable import convert_unix_to_readable
 
 """Need data from sales_order table
 When the sales_order table is converted to fact_sales_order the
-below conversions will happen. For each of the 4 dates there will be a 
+below conversions will happen. For each of the 4 dates there will be a
 dim_date table where the id is date_id (date: yyyy-mm-dd) some of these dates
 might coincide and therefore share a dim_date table. So will need to
 convert each of created_at, last_updated, agreed_delivery_date and
@@ -15,9 +15,9 @@ Also need payment_data as fact_payment references the dim_date table.
 
 created_at (timestamp) --> created_date (date: yyyy-mm-dd)
 last_updated (timestamp) --> last_updated_date (date: yyyy-mm-dd)
-agreed_delivery_date (varchar in form yyyy-mm-dd) 
+agreed_delivery_date (varchar in form yyyy-mm-dd)
 --> agreed_delivery_date (date: yyyy-mm-dd)
-agreed_payment_date (varchar in form yyyy-mm-dd) 
+agreed_payment_date (varchar in form yyyy-mm-dd)
 --> agreed_payment_date (date: yyyy-mm-dd)"""
 
 
@@ -68,7 +68,6 @@ def transform_to_dim_date(sales_order_data, payment_data):
         "November",
         "December",
     ]
-
     for date_str in list_of_unique_dates:
         date_obj = datetime.strptime(date_str, "%Y-%m-%d")
         entry = {

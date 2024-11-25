@@ -2,7 +2,6 @@ import boto3
 import re
 from datetime import datetime
 from botocore.exceptions import ClientError
-from pprint import pprint
 
 
 def update_last_ran_s3(bucket_name="totesys-transformed-data-bucket"):

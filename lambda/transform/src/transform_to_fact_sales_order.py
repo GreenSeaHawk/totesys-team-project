@@ -2,7 +2,7 @@ import json
 import boto3
 from convert_unix_to_readable import convert_unix_to_readable
 
-"""Need data from sales_order, 
+"""Need data from sales_order,
 create a new serial --> sales_record_id (int)
 sales_order_id --> sales_order_id (int)
 created_at (timestamp) --> created_date (date: yyyy-mm-dd)
@@ -15,9 +15,9 @@ units_sold (int) --> units_sold (int)
 unit_price (numeric/float) --> unit_price (numeric/float)
 currency_id (int) --> currency_id (int)
 design_id (int) --> design_id (int)
-agreed_payment_date (varchar in form yyyy-mm-dd) 
+agreed_payment_date (varchar in form yyyy-mm-dd)
 --> agreed_payment_date (date: yyyy-mm-dd)
-agreed_delivery_date (varchar in form yyyy-mm-dd) 
+agreed_delivery_date (varchar in form yyyy-mm-dd)
 --> agreed_delivery_date (date: yyyy-mm-dd)
 agreed_delivery_location_id (int) --> agreed_delivery_location_id (int)
 """
@@ -42,7 +42,7 @@ def transform_to_fact_sales_order(
             Bucket=Bucket, Key="fact-sales-order-highest-id.txt"
         )
         count = int(response["Body"].read().decode("utf-8"))
-    except:
+    except Exception:
         count = 1
 
     for sales in sales_order_data:

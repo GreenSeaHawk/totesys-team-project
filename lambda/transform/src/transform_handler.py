@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
-from botocore.exceptions import ClientError
+
+# from botocore.exceptions import ClientError
 from get_data_from_files import get_data_from_files
 from list_all_files import (
     list_all_filenames_in_s3,
@@ -237,18 +238,21 @@ def transform_handler(event, context):
 
     return {
         "statusCode": 200,
-        "body": f"Transformation went fine. Processed {total_files_processed} files.",
+        "body": (
+            f"Transformation went fine. Processed {total_files_processed}"
+            " files."
+        ),
     }
 
     # except ClientError as e:
     #     logger.error(f"ClientError: {e.response['Error']['Message']}")
     #     return {
     #         "statusCode": 500,
-    #         "body": f"Client Error occured. {e.response['Error']['Message']}",
+    #         "body": f"Client Error occured {e.response['Error']['Message']}",
     #     }
     # except Exception as e:
     #     logger.error(f"Error: {str(e)}")
     #     return {
     #         "statusCode": 500,
-    #         "body": f"An unexpected Error occured. {str(e)}",
+    #         "body": f"An unexpected Error occured {str(e)}",
     #     }

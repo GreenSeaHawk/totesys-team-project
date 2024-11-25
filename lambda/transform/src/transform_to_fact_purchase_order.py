@@ -42,7 +42,7 @@ def transform_to_fact_purchase_order(
             Bucket=Bucket, Key="fact-purchase-order-highest-id.txt"
         )
         count = int(response["Body"].read().decode("utf-8"))
-    except:
+    except Exception:
         count = 1
 
     for purchase_order in purchase_order_data:

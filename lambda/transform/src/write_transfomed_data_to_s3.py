@@ -19,6 +19,9 @@ def write_transformed_data_to_s3(
         )
     except Exception as e:
         logger.error(
-            f"Failed to write transformed data for table {table_name} to s3: {str(e)}"
+            (
+                f"Failed to write transformed data for table {table_name}"
+                f" to s3: {str(e)}"
+            )
         )
         raise e

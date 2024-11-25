@@ -22,7 +22,7 @@ def transform_to_dim_currency(currency_data):
     def get_currency_name(currency_code):
         try:
             c_name = Currency(currency_code).currency_name
-        except:
+        except Exception:
             raise Exception("currency_name not found")
         return c_name
 

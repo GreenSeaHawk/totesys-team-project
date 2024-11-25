@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 
 """Need sales_data and department_data and they merge on department_id

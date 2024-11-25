@@ -17,7 +17,6 @@ payment_type_id (int) --> payment_type_id (int)
 paid (bool) --> paid (bool)
 payment_date (varchar in form yyyy-mm-dd) --> payment_date (date: yyyy-mm-dd)
 """
-from pprint import pprint
 
 
 def transform_to_fact_payment(
@@ -39,7 +38,7 @@ def transform_to_fact_payment(
             Bucket=Bucket, Key="fact-payment-highest-id.txt"
         )
         count = int(response["Body"].read().decode("utf-8"))
-    except:
+    except Exception:
         count = 1
 
     for payment in payment_data:

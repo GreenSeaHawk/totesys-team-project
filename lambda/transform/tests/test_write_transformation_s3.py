@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from src.write_transfomed_data_to_s3 import write_transformed_data_to_s3
 
 
@@ -59,6 +59,6 @@ def test_write_transformed_data_to_s3_logs_failure(
         in caplog.text
     )
     assert (
-        f"Failed to write transformed data for table {table_name} to s3: Mock S3 Failure."
-        in caplog.text
+        f"Failed to write transformed data for table {table_name}"
+        f" to s3: Mock S3 Failure." in caplog.text
     )

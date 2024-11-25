@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime
 from src.remove_old_entries import filter_latest_data
 
 

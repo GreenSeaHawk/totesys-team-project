@@ -282,7 +282,6 @@ class TestListAllFileNames:
     def test_list_all_file_names_no_matching_files(
         self, populated_ingestion_bucket
     ):
-
         result = list_all_filenames_in_s3(
             Bucket="ingestion_bucket",
             last_run_timestamp=datetime(2025, 12, 30, 0, 0, 0),
