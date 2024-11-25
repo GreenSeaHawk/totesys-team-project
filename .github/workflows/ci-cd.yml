@@ -97,9 +97,6 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: build image
         run: |
-          make build
-          make tag
-          make ecr-login
           make push
           make deploy      
 
