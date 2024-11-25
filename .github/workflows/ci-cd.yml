@@ -79,6 +79,10 @@ jobs:
   deploy-docker-transform:
     needs: [install-docker,build-and-test-transform]
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      REGION: ${{ secrets.AWS_REGION }}
+      PROFILE: default
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
