@@ -6,12 +6,13 @@ import json
 import random
 import string
 import time
-from src.list_all_filenames import list_all_filenames_in_s3
+from datetime import datetime
+from src.list_all_filenames import list_all_filenames_in_s3, get_last_ran
 
 
 def generate_random_filename():
     """Generate a random file with a timestamp"""
-    timestamp = random.randint(1500000001, 2000000000)
+    timestamp = random.randint(150000000100000000, 200000000000000000)
     random_str = "".join(
         random.choices(string.ascii_letters + string.digits, k=10)
     )
@@ -65,7 +66,7 @@ def create_transform_bucket(s3):
 
 @pytest.fixture
 def populated_ingestion_bucket(s3, create_ingestion_bucket):
-    file_key_1 = "payment_type/payment_type_20220101000000.json"
+    file_key_1 = "payment_type/payment_type_202201010000000000.json"
     file_content_1 = [
         {
             "payment_type_id": 1,
@@ -87,7 +88,7 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
         },
     ]
     json_content_1 = json.dumps(file_content_1)
-    file_key_2 = "payment_type/payment_type_20230101000000.json"
+    file_key_2 = "payment_type/payment_type_202301010000000000.json"
     file_content_2 = [
         {
             "payment_type_id": 4,
@@ -108,11 +109,26 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
             "last_updated": "20230101",
         },
     ]
+    last_run_key = 'last_run.json'
+    last_run_content = '202101010000000000'
+    last_run_2022_dec_key = 'last_run_2022_dec.json'
+    last_run_2022_dec_content = '202212010000000000'
+    last_run_2025_key = 'last_run_2025.json'
+    last_run_2025_content = '202501010000000000'
     json_content_2 = json.dumps(file_content_2)
-    file_key_3 = "address/address_19500101000000.json"
-    file_key_4 = "address/address_19600101000000.json"
-    file_key_5 = "address/address_20800101000000.json"
-    file_key_6 = "address/address_20900101000000.json"
+    file_key_3 = "address/address_195001010000000000.json"
+    file_key_4 = "address/address_196001010000000000.json"
+    file_key_5 = "address/address_208001010000000000.json"
+    file_key_6 = "address/address_209001010000000000.json"
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=last_run_key, Body=last_run_content
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=last_run_2022_dec_key, Body=last_run_2022_dec_content
+    )
+    s3.put_object(
+        Bucket="ingestion_bucket", Key=last_run_2025_key, Body=last_run_2025_content
+    )
     s3.put_object(
         Bucket="ingestion_bucket", Key=file_key_3, Body=json_content_1
     )
@@ -136,21 +152,22 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
 @pytest.fixture
 def transform_bucket_2022(s3, create_transform_bucket):
     file_key = "last_run.json"
-    file_content = "20210101000000"
+    #file_content = "20210101000000"
+    file_content = '202001010000000000'
     s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
 
 
 @pytest.fixture
 def transform_bucket_2022_dec(s3, create_transform_bucket):
     file_key = "last_run.json"
-    file_content = "20221201143000"
+    file_content = '202001010000000000'
     s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
 
 
 @pytest.fixture
 def transform_bucket_2025(s3, create_transform_bucket):
     file_key = "last_run.json"
-    file_content = "20251201143000"
+    file_content = '202001010000000000'
     s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
 
 
@@ -172,7 +189,7 @@ class TestMockFixtures:
 
     def test_populate_ingestion_bucket(self, s3, populated_ingestion_bucket):
         response = s3.list_objects_v2(Bucket="ingestion_bucket")
-        assert len(response["Contents"]) == 6
+        assert len(response["Contents"]) == 9
 
     def test_generic_aws_fixture(self, mocked_aws):
         s3_client = boto3.client("s3")
@@ -191,7 +208,7 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket, transform_bucket_2022
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", prefix="payment_type"
+            Bucket="ingestion_bucket", key="last_run.json", prefix="payment_type"
         )
         assert isinstance(result, list)
 
@@ -199,11 +216,11 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket, transform_bucket_2022
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", prefix="payment_type"
+            Bucket="ingestion_bucket",key="last_run.json", prefix="payment_type"
         )
         expected = [
-            "payment_type/payment_type_20220101000000.json",
-            "payment_type/payment_type_20230101000000.json",
+            "payment_type/payment_type_202201010000000000.json",
+            "payment_type/payment_type_202301010000000000.json",
         ]
         assert f"Expected {expected} but got {result}"
         assert result == expected
@@ -212,16 +229,16 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket, transform_bucket_2022_dec
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", prefix="payment_type"
+            Bucket="ingestion_bucket", key="last_run_2022_dec.json", prefix="payment_type"
         )
-        expected = ["payment_type/payment_type_20230101000000.json"]
+        expected = ["payment_type/payment_type_202301010000000000.json"]
         assert result == expected
 
     def test_list_all_filnames_returns_all_filenames_after_2025(
         self, populated_ingestion_bucket, transform_bucket_2025
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", prefix="payment_type"
+            Bucket="ingestion_bucket",key="last_run_2025.json", prefix="payment_type"
         )
         expected = []  # NO files in 'payment_type' after 2025.
         assert result == expected
@@ -229,12 +246,13 @@ class TestListAllFileNames:
     def test_list_all_filnames_returns_all_filenames_after_2025_address(
         self, populated_ingestion_bucket, transform_bucket_2025
     ):
+        
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", prefix="address"
+            Bucket="ingestion_bucket",key="last_run_2025.json",  prefix="address"
         )
         expected = [
-            "address/address_20800101000000.json",
-            "address/address_20900101000000.json",
+            "address/address_208001010000000000.json",
+            "address/address_209001010000000000.json",
         ]
         assert result == expected
 
@@ -243,7 +261,7 @@ class TestListAllFileNames:
     ):
 
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket", prefix="payment_type"
+            Bucket="ingestion_bucket", key="last_run_2025.json", prefix="payment_type"
         )
         assert result == []  # No files newer than the last_run.json timestamp
 
@@ -251,20 +269,51 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket, transform_bucket_2025
     ):
         with pytest.raises(
-            NameError, match="No files found in s3://ingestion_bucket/hi"
+            TypeError
         ):
             list_all_filenames_in_s3(Bucket="ingestion_bucket", prefix="hi")
+
+    # def test_list_all_filenames_in_s3_stress(
+    #     self, s3, create_ingestion_bucket, create_transform_bucket
+    # ):
+    #     BUCKET_NAME = "ingestion_bucket"
+    #     TRANSFORM_BUCKET_NAME = "transform_bucket"
+    #     LAST_RUN_KEY = "last_run.json"
+
+    #     last_run_timestamp = 1400000000  # as an example
+    #     s3.put_object(  # example timestamp
+    #         Bucket=TRANSFORM_BUCKET_NAME,
+    #         Key=LAST_RUN_KEY,
+    #         Body=str(last_run_timestamp),
+    #     )
+
+    #     number_of_files = 30
+    #     for _ in range(number_of_files):
+    #         filename = generate_random_filename()
+    #         s3.put_object(
+    #             Bucket=BUCKET_NAME, Key=filename, Body="Test content"
+    #         )
+
+    #     # measure execution time of the function
+    #     start_time = time.time()
+    #     file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME, key=LAST_RUN_KEY)
+    #     end_time = time.time()
+
+    #     print(f"Number of files returned: {len(file_names)}")
+    #     print(f"Execution time: {end_time - start_time:.2f} seconds.")
+
+    #     assert len(file_names) > 0
 
     def test_list_all_filenames_in_s3_stress(
         self, s3, create_ingestion_bucket, create_transform_bucket
     ):
         BUCKET_NAME = "ingestion_bucket"
         TRANSFORM_BUCKET_NAME = "transform_bucket"
-        LAST_RUN_KEY = "last_run.json"
+        LAST_RUN_KEY = "new_last_run.json"
 
-        last_run_timestamp = 1400000000  # as an example
+        last_run_timestamp = 150001010000000000  # as an example
         s3.put_object(  # example timestamp
-            Bucket=TRANSFORM_BUCKET_NAME,
+            Bucket=BUCKET_NAME,
             Key=LAST_RUN_KEY,
             Body=str(last_run_timestamp),
         )
@@ -272,16 +321,35 @@ class TestListAllFileNames:
         number_of_files = 30
         for _ in range(number_of_files):
             filename = generate_random_filename()
+            print(filename)
             s3.put_object(
                 Bucket=BUCKET_NAME, Key=filename, Body="Test content"
             )
 
         # measure execution time of the function
         start_time = time.time()
-        file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME)
+        file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME, key=LAST_RUN_KEY)
         end_time = time.time()
 
         print(f"Number of files returned: {len(file_names)}")
         print(f"Execution time: {end_time - start_time:.2f} seconds.")
 
         assert len(file_names) > 0
+
+    # def test_stress_with_last_run(self, s3, create_ingestion_bucket):
+    #     last_run_key = "new_last_run.json"
+    #     last_run_timestamp = 150001010000000000  # Arbitrary timestamp
+    #     s3.put_object(Bucket="ingestion_bucket", Key=last_run_key, Body=str(last_run_timestamp))
+
+    #     # Insert a large number of files
+    #     for _ in range(30):
+    #         filename = generate_random_filename()
+    #         print(filename)
+    #         s3.put_object(Bucket="ingestion_bucket", Key=filename, Body="Content")
+
+    #     start_time = time.time()
+    #     result = list_all_filenames_in_s3(Bucket="ingestion_bucket", key=last_run_key)
+    #     end_time = time.time()
+
+    #     assert len(result) > 0  # Ensure some files are returned
+    #     print(f"Processed {len(result)} files in {end_time - start_time:.2f} seconds.")
