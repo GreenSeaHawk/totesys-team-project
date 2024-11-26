@@ -44,10 +44,7 @@ data "aws_iam_policy_document" "cw_document_load" {
   statement {
 
     actions = [ "logs:CreateLogStream", "logs:PutLogEvents" ]
-    #"arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/transform_lambda_func:*"
-    resources = ["*"
-      
-    ]
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/load_lambda_func:*"]
   }
 }
 
@@ -84,4 +81,25 @@ resource "aws_iam_policy" "s3_policy_load" {
 resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment_load" {
     role = aws_iam_role.load_lambda_role.name
     policy_arn = aws_iam_policy.s3_policy_load.arn
+}
+
+##################################################################################
+# SNS permissions for Lambda to publish to SNS
+data "aws_iam_policy_document" "sns_publish_document_load" {
+  statement {
+    actions = ["sns:Publish"]
+    resources = [
+      aws_sns_topic.lambda_error_alert_load.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "sns_publish_policy_load" {
+  name_prefix = "sns-publish-policy"
+  policy = data.aws_iam_policy_document.sns_publish_document_load.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_sns_publish_policy_attachment_load" {
+  role       = aws_iam_role.load_lambda_role.name
+  policy_arn = aws_iam_policy.sns_publish_policy_load.arn
 }

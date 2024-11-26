@@ -11,7 +11,6 @@ resource "aws_iam_role_policy_attachment" "lambda_ecr_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-
 ################################################################################################################################################################################################################################
 # s3 permissions
 data "aws_iam_policy_document" "s3_document_transform" {
@@ -68,4 +67,24 @@ resource "aws_iam_policy" "cw_policy_transform" {
 resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment_transform" {
     role = aws_iam_role.transform_lambda_role.name
     policy_arn = aws_iam_policy.cw_policy_transform.arn
+}
+###########################################################################
+# SNS permissions for Lambda to publish to SNS
+data "aws_iam_policy_document" "sns_publish_document_transform" {
+  statement {
+    actions = ["sns:Publish"]
+    resources = [
+      aws_sns_topic.lambda_error_alert_transform.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "sns_publish_policy_transform" {
+  name_prefix = "sns-publish-policy"
+  policy = data.aws_iam_policy_document.sns_publish_document_transform.json
+}
+
+resource "aws_iam_role_policy_attachment" "transform_lambda_sns_publish_policy_attachment" {
+  role       = aws_iam_role.transform_lambda_role.name
+  policy_arn = aws_iam_policy.sns_publish_policy_transform.arn
 }
