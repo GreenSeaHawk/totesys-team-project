@@ -1,4 +1,4 @@
-# # CHANGE FILE PATH NAMES WHEN KNOWN
+# CHANGE FILE PATH NAMES WHEN KNOWN
 resource "aws_lambda_function" "transform_lambda_func" {
     function_name = "transform_lambda_func"
     role = aws_iam_role.transform_lambda_role.arn

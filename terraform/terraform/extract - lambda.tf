@@ -2,7 +2,7 @@
 
 resource "aws_lambda_function" "extract_lambda_func" {
     function_name = "extract_lambda_func"
-    filename = "${path.module}/../compressed_funcs/extract_lambda.zip"
+    filename = "${path.module}/../../compressed_funcs/extract_lambda.zip"
     role = aws_iam_role.extract_lambda_role.arn
     handler = "handler.lambda_handler" # this might not be the correct path
     runtime = "python3.13"
@@ -14,8 +14,8 @@ resource "aws_lambda_function" "extract_lambda_func" {
 # Zip extract lambda handler to local zip file
 data "archive_file" "archive_extract_lambda" {
   type        = "zip"
-  source_dir = "${path.module}/../lambda/extract/src"
-  output_path = "${path.module}/../compressed_funcs/extract_lambda.zip"
+  source_dir = "${path.module}/../../lambda/extract/src"
+  output_path = "${path.module}/../../compressed_funcs/extract_lambda.zip"
 }
 
 # ZIPPED MANUALLY
@@ -28,7 +28,7 @@ data "archive_file" "archive_extract_lambda" {
 
 # Attach zipped extract layer to extract lambda func
 resource "aws_lambda_layer_version" "extract_lambda_layer" {
-  filename   = "${path.module}/../layers/pg8000-panda-numpy.zip"
+  filename   = "${path.module}/../../layers/pg8000-panda-numpy.zip"
   layer_name = "extract_lambda_layer"
 }
 

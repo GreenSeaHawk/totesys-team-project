@@ -66,3 +66,4 @@ data "aws_ecr_image" "load_image" {
   repository_name =  data.terraform_remote_state.ecr.outputs.load_ecr_name
   image_tag       = "latest"
 }
+
