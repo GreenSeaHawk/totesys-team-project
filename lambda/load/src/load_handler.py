@@ -19,9 +19,6 @@ update_last_ran_s3(bucket, load-last-ran.json)
 
 def handler(event, context):
     list_of_tables = [
-        "fact_sales_order",
-        "fact_purchase_order",
-        "fact_payment",
         "dim_counterparty",
         "dim_currency",
         "dim_date",
@@ -30,6 +27,9 @@ def handler(event, context):
         "dim_design",
         "dim_payment_type",
         "dim_transaction",
+        "fact_sales_order",
+        "fact_purchase_order",
+        "fact_payment",
     ]
     key = "load-last-ran.json"
     bucket = "totesys-transformed-data-bucket"

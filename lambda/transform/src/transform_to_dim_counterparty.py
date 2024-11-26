@@ -38,6 +38,7 @@ def transform_to_dim_counterparty(counterparty_data, address_data):
             "address_line_2",
             "district",
             "city",
+            "postal_code",
             "country",
             "phone",
         ]
@@ -47,6 +48,7 @@ def transform_to_dim_counterparty(counterparty_data, address_data):
             "address_line_2": "counterparty_legal_address_line_2",
             "district": "counterparty_legal_district",
             "city": "counterparty_legal_city",
+            "postal_code":"counterparty_legal_postal_code",
             "country": "counterparty_legal_country",
             "phone": "counterparty_legal_phone_number",
         }
