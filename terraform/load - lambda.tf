@@ -58,7 +58,7 @@ resource "aws_ecr_repository" "load_lambda_repo" {
 resource "aws_lambda_function" "load_lambda_func" {
     function_name = "load_lambda_func"
     role = aws_iam_role.load_lambda_role.arn
-    image_uri     = "039612847146.dkr.ecr.eu-west-2.amazonaws.com/load_lambda_func:latest"
+    image_uri     = "${aws_ecr_repository.load_lambda_repo.repository_url}@${data.aws_ecr_image.load_image.image_digest}"
     package_type = "Image"
     timeout = 600
     memory_size = 512

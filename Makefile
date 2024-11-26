@@ -14,10 +14,11 @@ PROFILE = default
 PIP:=pip
 
 # Additional variables for Docker and ECR
-# AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query "Account" --output text --profile $(PROFILE))
+AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query "Account" --output text --profile $(PROFILE))
 ECR_REPO_NAME := transform_lambda_func
 IMAGE_TAG := latest
-IMAGE_URI := 118780647275.dkr.ecr.$(REGION).amazonaws.com/$(ECR_REPO_NAME):$(IMAGE_TAG)
+IMAGE_URI_TRANSFORM := $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com/transform_lambda_func:$(IMAGE_TAG)
+IMAGE_URI_LOAD := $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com/load_lambda_func:$(IMAGE_TAG)
 
 
 
@@ -144,26 +145,33 @@ run-checks-transform:security-test-transform unit-test-transform pep8-test-trans
 run-checks-load:security-test-load unit-test-load pep8-test-load
 
 # Build the Docker image
-build:
-	docker build -t $(ECR_REPO_NAME) .
+build-transform:
+	docker build -f Dockerfile.transform -t transform_lambda_func .
+build-load:
+	docker build -f Dockerfile.load -t load_lambda_func .
 
 # Tag the Docker image
-tag:
-	docker tag $(ECR_REPO_NAME):latest $(IMAGE_URI)
+tag-transform:
+	docker tag transform_lambda_func:latest $(IMAGE_URI_TRANSFORM)
+tag-load:
+	docker tag load_lambda_func:latest $(IMAGE_URI_LOAD)
 
 # Login to Amazon ECR
 ecr-login:
 	aws ecr get-login-password --region $(REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 
 # Push the Docker image to ECR
-push: build tag ecr-login
-	sudo usermod -aG docker $USER
-	docker push $(IMAGE_URI)
-	
+push-transform: ecr-login
+# sudo usermod -aG docker $USER
+#	This will only work if you grant docker SUDO priveleges with the command above
+	docker push $(IMAGE_URI_TRANSFORM)
 
-# Deploy the Lambda function with the new image
-deploy:
-	aws lambda update-function-code --function-name $(ECR_REPO_NAME) --image-uri $(IMAGE_URI) --region $(REGION) --profile $(PROFILE)
+push-load: ecr-login
+	docker push $(IMAGE_URI_LOAD)
+
+
+deploy-transform: build-transform tag-transform push-transform
+deploy-load: build-load tag-load ecr-login push-load
 
 debug:
 	@echo "AWS_ACCOUNT_ID: $(AWS_ACCOUNT_ID)"
