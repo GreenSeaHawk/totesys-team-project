@@ -32,25 +32,3 @@ resource "aws_lambda_layer_version" "extract_lambda_layer" {
   layer_name = "extract_lambda_layer"
 }
 
-# Create rule to trigger every 5 mins
-resource "aws_cloudwatch_event_rule" "trigger_extract_5_mins" {
-    name = "trigger_extract_5_mins"
-    description = "Triggers extract lambda func every 5 mins"
-    schedule_expression = "rate(5 minutes)"
-}
-
-# Targets rule towards extract_lambda_func
-resource "aws_cloudwatch_event_target" "check_extract_5_mins" {
-    rule = aws_cloudwatch_event_rule.trigger_extract_5_mins.name
-    target_id = "extract_lambda_func"
-    arn = aws_lambda_function.extract_lambda_func.arn
-}
-
-# permissions to check extract_lambda_func
-resource "aws_lambda_permission" "allow_cloudwatch_execute_extract" {
-    statement_id = "AllowExecutionFromCloudWatch"
-    action = "lambda:InvokeFunction"
-    function_name = aws_lambda_function.extract_lambda_func.function_name
-    principal = "events.amazonaws.com"
-    source_arn = aws_cloudwatch_event_rule.trigger_extract_5_mins.arn
-}

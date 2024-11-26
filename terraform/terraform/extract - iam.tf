@@ -99,4 +99,23 @@ resource "aws_iam_role_policy_attachment" "extract_lambda_sm_access" {
 }
 ################################################################################################################################################################################################################################
 
+# SNS permissions for Lambda to publish to SNS
+data "aws_iam_policy_document" "sns_publish_document_extract" {
+  statement {
+    actions = ["sns:Publish"]
+    resources = [
+      aws_sns_topic.lambda_error_alert_extract.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "sns_publish_policy_extract" {
+  name_prefix = "sns-publish-policy"
+  policy = data.aws_iam_policy_document.sns_publish_document_extract.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_sns_publish_policy_attachment" {
+  role       = aws_iam_role.extract_lambda_role.name
+  policy_arn = aws_iam_policy.sns_publish_policy_extract.arn
+}
 

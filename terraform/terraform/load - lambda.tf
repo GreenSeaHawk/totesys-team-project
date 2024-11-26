@@ -31,28 +31,6 @@
 #   layer_name = "load_lambda_layer"
 # }
 
-
-# # Trigger for load if something added to transformed data bucket
-# resource "aws_s3_bucket_notification" "aws_load_lambda_trigger" {
-#   bucket = aws_s3_bucket.totesys_transformed_data_bucket.id
-#   lambda_function {
-#     lambda_function_arn = aws_lambda_function.load_lambda_func.arn
-#     events              = ["s3:ObjectCreated:*"]
-
-#   }
-# }
-
-# # Permissions for s3 bucket to trigger load func
-# resource "aws_lambda_permission" "allow_s3_bucket_to_execute_load" {
-#   statement_id  = "AllowS3Invoke"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.load_lambda_func.function_name
-#   principal     = "s3.amazonaws.com"
-#   source_arn    = "arn:aws:s3:::${aws_s3_bucket.totesys_transformed_data_bucket.id}"
-# }
-
-
-
 resource "aws_lambda_function" "load_lambda_func" {
     function_name = "load_lambda_func"
     role = aws_iam_role.load_lambda_role.arn
