@@ -169,7 +169,6 @@ push-transform: ecr-login
 push-load: ecr-login
 	docker push $(IMAGE_URI_LOAD)
 
-
 deploy-transform: build-transform tag-transform push-transform
 deploy-load: build-load tag-load ecr-login push-load
 
