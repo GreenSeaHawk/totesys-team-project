@@ -1,19 +1,20 @@
 from src.load_handler import handler
 from unittest.mock import patch
 
+
 list_of_tables = [
-    "fact_sales_order",
-    "fact_purchase_order",
-    "fact_payment",
-    "dim_counterparty",
-    "dim_currency",
-    "dim_date",
-    "dim_location",
-    "dim_staff",
-    "dim_design",
-    "dim_payment_type",
-    "dim_transaction",
-]
+        "dim_counterparty",
+        "dim_currency",
+        "dim_date",
+        "dim_location",
+        "dim_staff",
+        "dim_design",
+        "dim_payment_type",
+        "dim_transaction",
+        "fact_sales_order",
+        "fact_purchase_order",
+        "fact_payment",
+    ]
 bucket = "totesys-transformed-data-bucket"
 key = "load-last-ran.json"
 
@@ -50,7 +51,7 @@ def test_handler_invokes_utils_correctly(
 
     for table in list_of_tables:
 
-        mock_list_all_filenames_in_s3.assert_any_call(bucket, table, key)
+        mock_list_all_filenames_in_s3.assert_any_call(bucket, key, table)
 
         mock_get_data_from_files.assert_any_call(bucket, f"{table} files")
         mock_insert_data_to_postgres.assert_any_call(

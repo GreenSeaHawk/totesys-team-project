@@ -10,13 +10,17 @@ from datetime import datetime
 from src.list_all_filenames import list_all_filenames_in_s3, get_last_ran
 
 
-def generate_random_filename():
-    """Generate a random file with a timestamp"""
+def generate_random_filename(prefix=""):
+    """Generate a random file name with a timestamp and optional prefix."""
     timestamp = random.randint(150000000100000000, 200000000000000000)
     random_str = "".join(
         random.choices(string.ascii_letters + string.digits, k=10)
     )
+    # Include the prefix if provided
+    if prefix:
+        return f"{prefix}/{random_str}_{timestamp}.json"
     return f"{random_str}_{timestamp}.json"
+
 
 
 @pytest.fixture(scope="function")
@@ -273,42 +277,10 @@ class TestListAllFileNames:
         ):
             list_all_filenames_in_s3(Bucket="ingestion_bucket", prefix="hi")
 
-    # def test_list_all_filenames_in_s3_stress(
-    #     self, s3, create_ingestion_bucket, create_transform_bucket
-    # ):
-    #     BUCKET_NAME = "ingestion_bucket"
-    #     TRANSFORM_BUCKET_NAME = "transform_bucket"
-    #     LAST_RUN_KEY = "last_run.json"
-
-    #     last_run_timestamp = 1400000000  # as an example
-    #     s3.put_object(  # example timestamp
-    #         Bucket=TRANSFORM_BUCKET_NAME,
-    #         Key=LAST_RUN_KEY,
-    #         Body=str(last_run_timestamp),
-    #     )
-
-    #     number_of_files = 30
-    #     for _ in range(number_of_files):
-    #         filename = generate_random_filename()
-    #         s3.put_object(
-    #             Bucket=BUCKET_NAME, Key=filename, Body="Test content"
-    #         )
-
-    #     # measure execution time of the function
-    #     start_time = time.time()
-    #     file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME, key=LAST_RUN_KEY)
-    #     end_time = time.time()
-
-    #     print(f"Number of files returned: {len(file_names)}")
-    #     print(f"Execution time: {end_time - start_time:.2f} seconds.")
-
-    #     assert len(file_names) > 0
-
     def test_list_all_filenames_in_s3_stress(
-        self, s3, create_ingestion_bucket, create_transform_bucket
+        self, s3, create_ingestion_bucket
     ):
         BUCKET_NAME = "ingestion_bucket"
-        TRANSFORM_BUCKET_NAME = "transform_bucket"
         LAST_RUN_KEY = "new_last_run.json"
 
         last_run_timestamp = 150001010000000000  # as an example
@@ -320,36 +292,17 @@ class TestListAllFileNames:
 
         number_of_files = 30
         for _ in range(number_of_files):
-            filename = generate_random_filename()
-            print(filename)
+            filename = generate_random_filename(prefix='tests')
             s3.put_object(
                 Bucket=BUCKET_NAME, Key=filename, Body="Test content"
             )
 
         # measure execution time of the function
         start_time = time.time()
-        file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME, key=LAST_RUN_KEY)
+        file_names = list_all_filenames_in_s3(Bucket=BUCKET_NAME, key=LAST_RUN_KEY, prefix='tests')
         end_time = time.time()
 
         print(f"Number of files returned: {len(file_names)}")
         print(f"Execution time: {end_time - start_time:.2f} seconds.")
 
         assert len(file_names) > 0
-
-    # def test_stress_with_last_run(self, s3, create_ingestion_bucket):
-    #     last_run_key = "new_last_run.json"
-    #     last_run_timestamp = 150001010000000000  # Arbitrary timestamp
-    #     s3.put_object(Bucket="ingestion_bucket", Key=last_run_key, Body=str(last_run_timestamp))
-
-    #     # Insert a large number of files
-    #     for _ in range(30):
-    #         filename = generate_random_filename()
-    #         print(filename)
-    #         s3.put_object(Bucket="ingestion_bucket", Key=filename, Body="Content")
-
-    #     start_time = time.time()
-    #     result = list_all_filenames_in_s3(Bucket="ingestion_bucket", key=last_run_key)
-    #     end_time = time.time()
-
-    #     assert len(result) > 0  # Ensure some files are returned
-    #     print(f"Processed {len(result)} files in {end_time - start_time:.2f} seconds.")
