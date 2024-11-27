@@ -71,7 +71,7 @@ jobs:
   deploy-ecr:
     name: deploy-ecr
     runs-on: ubuntu-latest
-    needs: [build-and-test-extract, build-and-test-transform, build-and-test-load ]
+    needs: [build-and-test-extract, build-and-test-transform] #, build-and-test-load ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,16 +95,28 @@ jobs:
 
       
 
-  install-docker:
+  build-and-push-images:
     runs-on: ubuntu-latest
     needs: deploy-ecr
     steps:
-      - uses: actions/checkout@v4
       - name: Check that the image builds
-        run: docker build . --file Dockerfile
+        uses: actions/checkout@v4
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build transform image
+        run: |
+          make build-transform
+      - name: Tag transform image
+        run: |
+          make tage-transform
+      - name: Push docker image to ecr
+        run: |
+          make push transform 
+   
+      
 
   deploy-docker-transform:
-    needs: [install-docker,build-and-test-transform]
+    needs: [setup-docker,build-and-test-transform]
     runs-on: ubuntu-latest
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
