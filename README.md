@@ -1,6 +1,6 @@
-[![Contributors][contributors-shield]][https://github.com/GreenSeaHawk/totesys-team-project/graphs/contributors]
-[![Forks][forks-shield]][https://github.com/GreenSeaHawk/totesys-team-project/forks]
-[![Issues][issues-shield]][https://github.com/GreenSeaHawk/totesys-team-project/issues]
+[![Contributors][https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge]][https://github.com/GreenSeaHawk/totesys-team-project/graphs/contributors]
+[![Forks][https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge]][https://github.com/GreenSeaHawk/totesys-team-project/forks]
+[![Issues][https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge]][https://github.com/GreenSeaHawk/totesys-team-project/issues]
 
 
 # Totesys ETL Pipeline
@@ -25,6 +25,14 @@ The data platform contains 3 separate lambda functions (extract, transform, load
 # Data Visualisation
 
 # Deployment 
+
+
+
+
+
+
+
+
 
 
 
