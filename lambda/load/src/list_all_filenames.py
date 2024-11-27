@@ -4,7 +4,6 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 
 
-
 def get_last_ran(bucket_name, key):
     """retrieves timestamp from the last_ran file in s3,
     if the file doesn't exist it returns a default timestamp"""
@@ -24,7 +23,7 @@ def list_all_filenames_in_s3(Bucket, key, prefix=""):
     than last_ran, in the specified directory"""
     s3_client = boto3.client("s3")
     last_run_timestamp = get_last_ran(Bucket, key)
-    last_run =int(last_run_timestamp.strftime("%Y%m%d%H%M%S%f")[
+    last_run = int(last_run_timestamp.strftime("%Y%m%d%H%M%S%f")[
         :-2
     ])
     try:
@@ -54,7 +53,6 @@ def list_all_filenames_in_s3(Bucket, key, prefix=""):
 
     # Return the list of files matching the timestamp criteria
     return file_names
-
 
 
 # def list_all_filenames_in_s3(Bucket, prefix="", Key="last_run.json"):
