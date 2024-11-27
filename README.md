@@ -73,3 +73,6 @@ As part of deployment the pipeline requires secrets for database connections in 
 ### Trigger deployment
 1. Push changes to main branch
 2. Monitor deployment progress in GitHub actions
+
+## Infrastructure
+![AWS Infrastructure](https://raw.githubusercontent.com/username/repository/branch/images/your-image.png)
