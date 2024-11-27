@@ -44,7 +44,7 @@ class TestGetDBCredentials:
         # Assert
         assert result == expected
 
-    def test_get_db_credentials_with_secret_value_not_found(self):
+    def test_get_db_credentials_with_secret_value_not_found(self, datbase_credentials):
         # Assert
         with pytest.raises(
             Exception, match="The Secret name could not be found."
