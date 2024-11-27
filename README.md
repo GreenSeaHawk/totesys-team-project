@@ -1,6 +1,6 @@
-[![Contributors](https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge)](https://github.com/GreenSeaHawk/totesys-team-project/graphs/contributors)
-[![Forks](https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge)](https://github.com/GreenSeaHawk/totesys-team-project/forks)
-[![Issues](https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge)](https://github.com/GreenSeaHawk/totesys-team-project/issues)
+[![Contributors](https://img.shields.io/github/contributors/GreenSeaHawk/totesys-team-project?style=for-the-badge)](https://github.com/GreenSeaHawk/totesys-team-project/graphs/contributors)
+[![Forks](https://img.shields.io/github/forks/GreenSeaHawk/totesys-team-project?style=for-the-badge)](https://github.com/GreenSeaHawk/totesys-team-project/network/members)
+[![Issues](https://img.shields.io/github/issues/GreenSeaHawk/totesys-team-project?style=for-the-badge)](https://github.com/GreenSeaHawk/totesys-team-project/issues)
 
 
 # Totesys ETL Pipeline
