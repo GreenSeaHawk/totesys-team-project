@@ -1,9 +1,10 @@
 import pytest
 import json
-import boto3, sqlalchemy
+import boto3
+import sqlalchemy
 from src.dbconnection import get_db_credentials, return_engine
 from moto import mock_aws
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 # Initialize mock Secrets Manager
@@ -73,5 +74,5 @@ class TestReturnEngine:
             "port": 1000,
         }
         expected_argument = f'postgresql://{credentials["user"]}:{credentials["password"]}@{credentials["host"]}:{credentials["port"]}/{credentials["database"]}'
-        returned_engine = return_engine(credentials)
+        return_engine(credentials)
         mock_create_engine.assert_called_once_with(expected_argument)

@@ -6,8 +6,7 @@ import json
 import random
 import string
 import time
-from datetime import datetime
-from src.list_all_filenames import list_all_filenames_in_s3, get_last_ran
+from src.list_all_filenames import list_all_filenames_in_s3
 
 
 def generate_random_filename(prefix=""):
@@ -20,7 +19,6 @@ def generate_random_filename(prefix=""):
     if prefix:
         return f"{prefix}/{random_str}_{timestamp}.json"
     return f"{random_str}_{timestamp}.json"
-
 
 
 @pytest.fixture(scope="function")
@@ -156,7 +154,6 @@ def populated_ingestion_bucket(s3, create_ingestion_bucket):
 @pytest.fixture
 def transform_bucket_2022(s3, create_transform_bucket):
     file_key = "last_run.json"
-    #file_content = "20210101000000"
     file_content = '202001010000000000'
     s3.put_object(Bucket="transform_bucket", Key=file_key, Body=file_content)
 
@@ -220,7 +217,7 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket, transform_bucket_2022
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket",key="last_run.json", prefix="payment_type"
+            Bucket="ingestion_bucket", key="last_run.json", prefix="payment_type"
         )
         expected = [
             "payment_type/payment_type_202201010000000000.json",
@@ -242,7 +239,7 @@ class TestListAllFileNames:
         self, populated_ingestion_bucket, transform_bucket_2025
     ):
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket",key="last_run_2025.json", prefix="payment_type"
+            Bucket="ingestion_bucket", key="last_run_2025.json", prefix="payment_type"
         )
         expected = []  # NO files in 'payment_type' after 2025.
         assert result == expected
@@ -250,9 +247,9 @@ class TestListAllFileNames:
     def test_list_all_filnames_returns_all_filenames_after_2025_address(
         self, populated_ingestion_bucket, transform_bucket_2025
     ):
-        
+
         result = list_all_filenames_in_s3(
-            Bucket="ingestion_bucket",key="last_run_2025.json",  prefix="address"
+            Bucket="ingestion_bucket", key="last_run_2025.json",  prefix="address"
         )
         expected = [
             "address/address_208001010000000000.json",

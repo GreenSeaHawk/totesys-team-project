@@ -134,7 +134,7 @@ class TestGetDataFromFiles:
             "dim_payment/2023/01/dim_payment_20230101000000.parquet",
             "dim_payment/2022/01/dim_payment_20220101000000.parquet",
         ]
-        response = get_data_from_files("transform_bucket", files)
+        get_data_from_files("transform_bucket", files)
         captured = capsys.readouterr()
         assert (
             captured.out.strip()
@@ -145,6 +145,6 @@ class TestGetDataFromFiles:
         self, capsys, populated_transform_bucket
     ):
         files = []
-        response = get_data_from_files("transform_bucket", files)
+        get_data_from_files("transform_bucket", files)
         captured = capsys.readouterr()
         assert captured.out.strip() == "No target files"
