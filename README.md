@@ -1,7 +1,35 @@
-# Northcoders Data Engineering Final Project
+[![Contributors][contributors-shield]][https://github.com/GreenSeaHawk/totesys-team-project/graphs/contributors]
+[![Forks][forks-shield]][https://github.com/GreenSeaHawk/totesys-team-project/forks]
+[![Issues][issues-shield]][https://github.com/GreenSeaHawk/totesys-team-project/issues]
 
-# Background
-This project is the product of the Northcoders group project. The task was to create a data platform for a hypothetical company (Terrific Totes) which would allow the company. This data platform is in the form of a ETL (extract, transform, load) pipeline and consists of:
+
+# Totesys ETL Pipeline
+
+# Introduction
+This project is the product of the Northcoders group project. The task was to create a data platform for a hypothetical company (Terrific Totes) which would allow the company to retrieve meaningful . This data platform is in the form of a ETL (extract, transform, load) pipeline, this pipeline extracts data from totesys database, transforms the data and loads it into a data warehouse for further analyis. It utilses Python, Terraform, Docker and AWS services.
+
+# Features
+The data platform contains 3 separate lambda functions (extract, transform, load) which are deployed to the AWS console via terraform and triggered to run as part of a state machine.
+## Extract
+ - Retrieves credentials for database connection from AWS secrets manager.
+ - Connects to database containing sales data using credentials retrieved.
+ - Extracts any new/updates data from the database.
+ - Uploads the extracted data to an S3 bucket.
+
+## Transform
+
+## Load
+
+# CICD Integration
+
+# Data Visualisation
+
+# Deployment 
+
+
+
+
+
 Data Extraction - Extracting data from the 'totesys' AWS RDS database into an S3 bucket.
 
 Data Transformation: Processing the data into a predefined table format (shown below) and storing it in a separate S3 bucket.
@@ -21,23 +49,6 @@ Data Transformation: Processing the data into a predefined table format (shown b
 | transaction          |           | dim_counterparty     |
 
 Data Loading - Loading the transformed data into an AWS RDS data warehouse.
-
-
-
-# Features
-The data platform contains 3 separate lambda functions (extract, transform, load) which are deployed to the AWS console via terraform and triggered to run as part of a state machine.
-## Extract
- - Retrieves credentials for database connection from AWS secrets manager.
- - Connects to database containing sales data using credentials retrieved.
- - Extracts any new/updates data from the database.
- - Uploads the extracted data to an S3 bucket.
-
-
-
-
-
-
-
 
 
 
