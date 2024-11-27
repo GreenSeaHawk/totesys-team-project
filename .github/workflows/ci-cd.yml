@@ -104,7 +104,9 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
         with:
-        region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.AWS_REGION }}
       - name: Build transform image
         run: |
           make build-transform
