@@ -114,19 +114,20 @@ jobs:
           make build-transform
       - name: Tag transform image
         run: |
-          make tag-transform
+          docker tag transform_lambda_func:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/transform_lambda_func:latest
       - name: Push docker image to ecr
         run: |
-          make push transform 
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/transform_lambda_func:latest
       - name: Build load image
         run: |
           make build-load
       - name: Tag load image
         run: |
-          make tag-load
+          docker tag load_lambda_func:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/load_lambda_func:latest
+
       - name: Push docker image to ecr
         run: |
-          make push-load
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/load_lambda_func:latest
    
    
       
