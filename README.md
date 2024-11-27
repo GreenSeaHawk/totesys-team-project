@@ -5,29 +5,29 @@
 
 # Totesys ETL Pipeline
 
-# Introduction
+## Introduction
 This project is the product of the Northcoders group project. The task was to create a data platform for a hypothetical company (Terrific Totes) which would allow the company to retrieve meaningful . This data platform is in the form of a ETL (extract, transform, load) pipeline, this pipeline extracts data from totesys database, transforms the data and loads it into a data warehouse for further analyis. It utilses Python, Terraform, Docker and AWS services.
 
-# Features
-The data platform contains 3 separate lambda functions (extract, transform, load) which are deployed to the AWS console via terraform and triggered to run as part of a state machine.
-## Extract
- - Retrieves credentials for database connection from AWS secrets manager.
- - Connects to database containing sales data using credentials retrieved.
- - Extracts any new/updates data from the database.
- - Uploads the extracted data to an S3 bucket.
+## **Tech Stack**
 
-## Transform
+- **Programming Language**: Python
+- **Visualisation**: Matplotlib, Jupyter Notebook
+- **Containerisation**: Docker
+- **AWS Cloud Services**: CloudWatch, ECR, Event Bridge, Lambda, RDS, Secrets Manager, SNS, Step Function, S3
+- **CI/CD**: GitHub Actions
+- **Infrastructure as Code**: Terraform
+- **Libraries**: Pandas, NumPy, PG8000, Boto3, Pytest, PyArrow, SQLAlchemy
 
-## Load
+---
 
-# CICD Integration
-
-# Data Visualisation
-
-# Deployment 
-
-
-
+## Features
+- Secrets management using **AWS Secrets Manager** for secure data handling
+- Automated ETL pipeline for transforming raw data into structured datasets
+- Cloud infrastructure created using **Terraform** for automated deployment
+- Containerised deployment of application code and dependencies using **Docker**
+- Centralised logging and error monitoring using **AWS CloudWatch** and **AWS SNS**
+- Data visualisation using **Matplotlib**
+- 
 
 
 
