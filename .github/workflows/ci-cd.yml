@@ -114,10 +114,20 @@ jobs:
           make build-transform
       - name: Tag transform image
         run: |
-          make tage-transform
+          make tag-transform
       - name: Push docker image to ecr
         run: |
           make push transform 
+      - name: Build load image
+        run: |
+          make build-load
+      - name: Tag load image
+        run: |
+          make tag-load
+      - name: Push docker image to ecr
+        run: |
+          make push-load
+   
    
       
 
