@@ -29,7 +29,7 @@ def setup_s3_bucket():
 
 
 class TestInsertToPostgres:
-    @patch("upload_data_to_db.pd.DataFrame.to_sql")
+    @patch("pandas.DataFrame.to_sql")
     def test_insert_data_passes_correct_args_to_to_sql(self, mock_to_sql):
         credentials = {
             "user": "test_user",
@@ -52,7 +52,7 @@ class TestInsertToPostgres:
             method=postgres_upsert,
         )
 
-    @patch("upload_data_to_db.pd.DataFrame.to_sql")
+    @patch("pandas.DataFrame.to_sql")
     def test_insert_data_prints_correct_string(self, mock_to_sql, capsys):
         credentials = {
             "user": "test_user",

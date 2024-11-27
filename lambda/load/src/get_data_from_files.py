@@ -19,6 +19,6 @@ def get_data_from_files(bucket, files):
             f"Succesfully captured {table_name} data from {len(files)} files"
         )
     else:
-        print(f"No target files")
+        print("No target files")
 
     return df

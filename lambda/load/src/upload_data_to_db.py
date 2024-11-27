@@ -1,6 +1,5 @@
-import pandas as pd
-from datetime import datetime
 import boto3
+from datetime import datetime
 from sqlalchemy.dialects.postgresql import insert
 
 
