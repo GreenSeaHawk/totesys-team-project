@@ -132,7 +132,7 @@ jobs:
   deploy-terraform:
     name: deploy-terraform
     runs-on: ubuntu-latest
-    needs: [build-and-test-extract build-and-test-transform build-and-test-load ]
+    needs: [build-and-test-extract, build-and-test-transform, build-and-test-load ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
