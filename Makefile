@@ -92,6 +92,7 @@ flake8:
 ## Install pytest
 pytest:
 	$(call execute_in_env, $(PIP) install pytest)
+	$(call execute_in_env, $(PIP) install pytest-testdox)
 
 
 ## Set up dev requirements (bandit, safety, black)
