@@ -75,4 +75,4 @@ As part of deployment the pipeline requires secrets for database connections in 
 2. Monitor deployment progress in GitHub actions
 
 ## Infrastructure
-![AWS Infrastructure](https://raw.githubusercontent.com/username/repository/branch/images/your-image.png)
+![AWS Infrastructure](https://github.com/GreenSeaHawk/totesys-team-project/blob/readme/infrastructure.png)
