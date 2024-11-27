@@ -1,3 +1,47 @@
+# Northcoders Data Engineering Final Project
+
+# Background
+This project is the product of the Northcoders group project. The task was to create a data platform for a hypothetical company (Terrific Totes) which would allow the company. This data platform is in the form of a ETL (extract, transform, load) pipeline and consists of:
+Data Extraction - Extracting data from the 'totesys' AWS RDS database into an S3 bucket.
+
+Data Transformation: Processing the data into a predefined table format (shown below) and storing it in a separate S3 bucket.
+
+| Table Name           |     →     | Table Name           |
+|----------------------|           |----------------------|
+| counterparty         |           | fact_sales_order     |
+| currency             |           | fact_purchase_orders |
+| department           |           | fact_payment         |
+| design               |           | dim_transaction      |
+| staff                |           | dim_staff            |
+| sales_order          |           | dim_payment_type     |
+| address              |           | dim_location         |
+| payment              |           | dim_design           |
+| purchase_order       |           | dim_date             |
+| payment_type         |           | dim_currency         |
+| transaction          |           | dim_counterparty     |
+
+Data Loading - Loading the transformed data into an AWS RDS data warehouse.
+
+
+
+# Features
+The data platform contains 3 separate lambda functions (extract, transform, load) which are deployed to the AWS console via terraform and triggered to run as part of a state machine.
+## Extract
+ - Retrieves credentials for database connection from AWS secrets manager.
+ - Connects to database containing sales data using credentials retrieved.
+ - Extracts any new/updates data from the database.
+ - Uploads the extracted data to an S3 bucket.
+
+
+
+
+
+
+
+
+
+
+
 # The Data Engineering Project
 
 **Read this document carefully - it contains (almost) all you need to know about the project!**
