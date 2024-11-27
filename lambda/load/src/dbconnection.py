@@ -1,7 +1,6 @@
 import boto3
 import json
 from botocore.exceptions import ClientError
-import psycopg2
 import sqlalchemy
 
 
@@ -27,7 +26,8 @@ def get_db_credentials(secret_name="my-database-connection"):
 def return_engine(db_credentials):
     """Create an sqlalchemy engine from Database credentials"""
     engine = sqlalchemy.create_engine(
-        f'postgresql://{db_credentials["user"]}:{db_credentials["password"]}@{db_credentials["host"]}:{db_credentials["port"]}/{db_credentials["database"]}'
+        (f'postgresql://{db_credentials["user"]}:{db_credentials["password"]}'
+         f'@{db_credentials["host"]}:{db_credentials["port"]}/'
+         f'{db_credentials["database"]}')
     )
     return engine
-#test comment

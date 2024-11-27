@@ -73,6 +73,10 @@ class TestReturnEngine:
             "database": "my_database",
             "port": 1000,
         }
-        expected_argument = f'postgresql://{credentials["user"]}:{credentials["password"]}@{credentials["host"]}:{credentials["port"]}/{credentials["database"]}'
+        expected_argument = (
+            f'postgresql://{credentials["user"]}:{credentials["password"]}'
+            f'@{credentials["host"]}:{credentials["port"]}/'
+            f'{credentials["database"]}'
+        )
         return_engine(credentials)
         mock_create_engine.assert_called_once_with(expected_argument)
